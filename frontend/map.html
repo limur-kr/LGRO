@@ -1,0 +1,314 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>짬뽕지도 - 지도</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          background: "#f9f9f9",
+          surface: "#ffffff",
+          "surface-container": "#eeeeee",
+          "surface-container-low": "#f3f3f3",
+          "surface-container-highest": "#e2e2e2",
+          "surface-variant": "#e2e2e2",
+          "inverse-surface": "#2f3131",
+          "on-background": "#1a1c1c",
+          "on-surface": "#1a1c1c",
+          "on-surface-variant": "#5b403d",
+          primary: "#b7131a",
+          "primary-container": "#db322f",
+          "on-primary": "#ffffff",
+          outline: "#906f6c",
+          "outline-variant": "#e4beb9",
+          error: "#ba1a1a"
+        },
+        spacing: { "margin-desktop": "48px", "container-max": "1280px", gutter: "16px" },
+        fontFamily: {
+          "display-lg": ["Hanken Grotesk"],
+          "headline-lg": ["Hanken Grotesk"],
+          "title-md": ["Hanken Grotesk"],
+          "label-caps": ["JetBrains Mono"],
+          "body-sm": ["Inter"],
+          "body-lg": ["Inter"]
+        },
+        fontSize: {
+          "display-lg": ["48px", { lineHeight: "56px", fontWeight: "800" }],
+          "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+          "title-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+          "label-caps": ["12px", { lineHeight: "16px", fontWeight: "700" }],
+          "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+          "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .hard-shadow { box-shadow: 4px 4px 0 0 #1a1c1c; }
+  .hard-shadow-hover:hover { box-shadow: 2px 2px 0 0 #1a1c1c; transform: translate(2px, 2px); }
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #906f6c; border-radius: 10px; }
+  #map { width: 100%; height: 100%; background: #e8e8e8; }
+</style>
+</head>
+<body class="bg-background text-on-background font-body-lg overflow-hidden">
+<nav class="fixed top-0 left-0 right-0 z-[100] bg-surface border-b-2 border-on-background">
+  <div class="flex justify-between items-center w-full px-4 md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
+    <div class="flex items-center gap-8">
+      <a class="font-display-lg text-3xl md:text-display-lg font-black text-primary leading-none" href="/">짬뽕지도</a>
+      <div class="hidden md:flex gap-6 items-center">
+        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="/">랭킹</a>
+        <a class="font-title-md text-title-md text-primary border-b-4 border-primary pb-1" href="map.html">지도</a>
+        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="report.html">제보</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <form class="relative hidden sm:block" data-search-form>
+        <input class="bg-surface-container border-2 border-on-background px-4 py-2 w-64 font-body-sm focus:ring-0 focus:border-primary outline-none" name="q" placeholder="지역 또는 식당 검색" type="search" />
+        <button class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant" type="submit">search</button>
+      </form>
+      <button class="bg-on-background text-surface px-6 py-2 font-title-md font-bold hover:bg-primary transition-colors active:scale-95 duration-100" data-auth-button type="button">로그인</button>
+    </div>
+  </div>
+</nav>
+
+<main class="relative h-screen w-full pt-[88px]">
+  <div class="absolute inset-0 z-0 pt-[88px]">
+    <div id="map"></div>
+    <div class="absolute left-1/2 top-28 z-10 hidden -translate-x-1/2 border-2 border-on-background bg-surface px-5 py-3 font-body-sm hard-shadow" id="map-status"></div>
+    <div class="absolute right-6 top-28 flex flex-col gap-2 z-10">
+      <button class="bg-surface border-2 border-on-background p-2 hard-shadow-hover transition-all" id="zoom-in" type="button"><span class="material-symbols-outlined">add</span></button>
+      <button class="bg-surface border-2 border-on-background p-2 hard-shadow-hover transition-all" id="zoom-out" type="button"><span class="material-symbols-outlined">remove</span></button>
+      <button class="bg-surface border-2 border-on-background p-2 mt-4 hard-shadow-hover transition-all" id="fit-bounds" type="button"><span class="material-symbols-outlined">my_location</span></button>
+    </div>
+    <div class="absolute top-28 left-1/2 -translate-x-1/2 z-10">
+      <button class="bg-on-background text-surface px-6 py-3 font-label-caps text-label-caps flex items-center gap-2 hard-shadow hover:bg-primary transition-all active:translate-y-1 active:shadow-none" id="reload-map" type="button">
+        <span class="material-symbols-outlined text-[18px]">refresh</span>
+        식당 다시 불러오기
+      </button>
+    </div>
+  </div>
+
+  <aside class="absolute top-[88px] left-0 bottom-0 w-full max-w-[420px] z-20 p-6 pointer-events-none">
+    <div class="h-full flex flex-col gap-4 pointer-events-auto">
+      <section class="bg-surface/95 backdrop-blur-md border-2 border-on-background p-4 hard-shadow">
+        <header class="mb-4 flex justify-between items-center">
+          <h1 class="font-headline-lg text-headline-lg">지도 검색</h1>
+          <span class="material-symbols-outlined text-primary">tune</span>
+        </header>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">위경도 데이터가 있는 식당을 Kakao Maps 마커로 표시합니다.</p>
+      </section>
+
+      <section class="flex-1 bg-surface/95 backdrop-blur-md border-2 border-on-background overflow-hidden flex flex-col hard-shadow">
+        <div class="bg-on-background text-surface p-3 font-label-caps text-label-caps flex justify-between items-center">
+          <span id="list-count">현재 지도 식당 0곳</span>
+          <span class="material-symbols-outlined text-[16px]">map</span>
+        </div>
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4" id="map-restaurant-list">
+          <div class="p-4 text-center font-body-sm text-on-surface-variant">식당 데이터를 불러오는 중입니다.</div>
+        </div>
+      </section>
+    </div>
+  </aside>
+
+  <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[520px] z-[110] transform translate-y-full transition-transform duration-500 ease-out px-4 md:px-0 pb-6" id="mini-card">
+    <div class="bg-surface border-4 border-on-background p-4 hard-shadow flex gap-4">
+      <div class="w-32 h-32 bg-surface-container shrink-0 border-2 border-on-background overflow-hidden">
+        <img class="w-full h-full object-cover" id="mini-card-image" alt="" />
+      </div>
+      <div class="flex-1 flex flex-col justify-between min-w-0">
+        <div>
+          <div class="flex justify-between items-start mb-1 gap-3">
+            <h2 class="font-headline-lg text-2xl leading-tight" id="mini-card-name">식당명</h2>
+            <button class="text-on-surface-variant hover:text-primary" onclick="hideMiniCard()" type="button"><span class="material-symbols-outlined">close</span></button>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 mb-2">
+            <div class="flex items-center gap-1 text-primary">
+              <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+              <span class="font-label-caps text-label-caps" id="mini-card-score">AI 0.0</span>
+            </div>
+            <span class="font-label-caps text-label-caps text-on-surface-variant" id="mini-card-region">지역</span>
+          </div>
+          <div class="bg-surface-container-highest p-2 border border-outline-variant">
+            <p class="font-body-sm text-body-sm text-on-surface line-clamp-2" id="mini-card-address">주소</p>
+          </div>
+        </div>
+        <a class="w-full mt-3 bg-primary text-surface py-2 font-bold flex items-center justify-center gap-2 hard-shadow-hover transition-all border-2 border-on-background" id="mini-card-link" href="#">
+          상세 보기
+          <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script type="module" src="/src/api.js"></script>
+<script type="module">
+  const api = window.JjamppongAPI;
+  const list = document.getElementById("map-restaurant-list");
+  const listCount = document.getElementById("list-count");
+  const mapStatus = document.getElementById("map-status");
+  let map = null;
+  let bounds = null;
+  let restaurants = [];
+  let markers = [];
+
+  function setStatus(message) {
+    mapStatus.textContent = message || "";
+    mapStatus.classList.toggle("hidden", !message);
+  }
+
+  function getKakaoKey() {
+    const params = new URLSearchParams(location.search);
+    return params.get("kakao_key") || localStorage.getItem("kakaoMapAppKey") || window.KAKAO_MAP_APP_KEY || "";
+  }
+
+  function loadKakaoMaps() {
+    return new Promise((resolve, reject) => {
+      if (window.kakao && window.kakao.maps) {
+        window.kakao.maps.load(resolve);
+        return;
+      }
+      const key = getKakaoKey();
+      if (!key) {
+        reject(new Error("Kakao Maps JavaScript 키가 필요합니다. ?kakao_key=키 또는 localStorage.kakaoMapAppKey로 설정하세요."));
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(key)}&autoload=false`;
+      script.onload = () => window.kakao.maps.load(resolve);
+      script.onerror = () => reject(new Error("Kakao Maps API를 불러오지 못했습니다."));
+      document.head.appendChild(script);
+    });
+  }
+
+  function initMap() {
+    const center = new kakao.maps.LatLng(37.5665, 126.9780);
+    map = new kakao.maps.Map(document.getElementById("map"), { center, level: 8 });
+    bounds = new kakao.maps.LatLngBounds();
+    document.getElementById("zoom-in").addEventListener("click", () => map.setLevel(Math.max(1, map.getLevel() - 1)));
+    document.getElementById("zoom-out").addEventListener("click", () => map.setLevel(map.getLevel() + 1));
+    document.getElementById("fit-bounds").addEventListener("click", fitMarkers);
+    renderMarkers();
+  }
+
+  function validCoordinates(restaurant) {
+    const lat = Number(restaurant.latitude);
+    const lng = Number(restaurant.longitude);
+    return Number.isFinite(lat) && Number.isFinite(lng);
+  }
+
+  function clearMarkers() {
+    markers.forEach((marker) => marker.setMap(null));
+    markers = [];
+    if (window.kakao && window.kakao.maps) {
+      bounds = new kakao.maps.LatLngBounds();
+    }
+  }
+
+  function renderMarkers() {
+    if (!map || !window.kakao || !window.kakao.maps) {
+      return;
+    }
+    clearMarkers();
+    restaurants.filter(validCoordinates).forEach((restaurant) => {
+      const position = new kakao.maps.LatLng(Number(restaurant.latitude), Number(restaurant.longitude));
+      const marker = new kakao.maps.Marker({ map, position, title: restaurant.name });
+      kakao.maps.event.addListener(marker, "click", () => showMiniCard(restaurant));
+      markers.push(marker);
+      bounds.extend(position);
+    });
+    fitMarkers();
+  }
+
+  function fitMarkers() {
+    if (!map || !markers.length || !bounds) {
+      return;
+    }
+    map.setBounds(bounds);
+  }
+
+  function renderList() {
+    const withCoords = restaurants.filter(validCoordinates);
+    listCount.textContent = `현재 지도 식당 ${withCoords.length.toLocaleString("ko-KR")}곳`;
+    list.innerHTML = withCoords.length
+      ? withCoords.map((restaurant, index) => `
+          <article class="group cursor-pointer border-b border-outline-variant pb-4 last:border-0 hover:bg-surface-container-low transition-colors p-2 -mx-2" data-index="${index}">
+            <div class="flex gap-4">
+              <div class="w-20 h-20 bg-surface-container overflow-hidden border border-on-background shrink-0">
+                <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="${api.getPrimaryImage(restaurant)}" alt="${api.escapeHtml(restaurant.name)}" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-title-md text-title-md mb-1 truncate">${api.escapeHtml(restaurant.name)}</h3>
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="bg-primary-container text-on-primary px-2 py-0.5 font-label-caps text-[10px] uppercase">AI ${api.formatScore(restaurant.sentiment_score)}</span>
+                  <span class="font-label-caps text-[12px] text-on-surface-variant">${api.escapeHtml(api.regionName(restaurant))}</span>
+                </div>
+                <p class="font-body-sm text-body-sm text-on-surface-variant truncate">${api.escapeHtml(restaurant.address || "주소 미상")}</p>
+              </div>
+            </div>
+          </article>
+        `).join("")
+      : '<div class="p-4 text-center font-body-sm text-on-surface-variant">위경도 데이터가 있는 식당이 없습니다.</div>';
+
+    list.querySelectorAll("[data-index]").forEach((item) => {
+      item.addEventListener("click", () => {
+        const restaurant = withCoords[Number(item.dataset.index)];
+        if (map && validCoordinates(restaurant)) {
+          map.panTo(new kakao.maps.LatLng(Number(restaurant.latitude), Number(restaurant.longitude)));
+        }
+        showMiniCard(restaurant);
+      });
+    });
+  }
+
+  function showMiniCard(restaurant) {
+    const card = document.getElementById("mini-card");
+    document.getElementById("mini-card-image").src = api.getPrimaryImage(restaurant);
+    document.getElementById("mini-card-image").alt = restaurant.name;
+    document.getElementById("mini-card-name").textContent = restaurant.name;
+    document.getElementById("mini-card-score").textContent = `AI ${api.formatScore(restaurant.sentiment_score)}점`;
+    document.getElementById("mini-card-region").textContent = api.regionName(restaurant);
+    document.getElementById("mini-card-address").textContent = restaurant.address || "주소 미상";
+    document.getElementById("mini-card-link").href = `reviews.html?id=${encodeURIComponent(restaurant.id)}`;
+    card.style.transform = "translate(-50%, 0)";
+  }
+
+  function hideMiniCard() {
+    document.getElementById("mini-card").style.transform = "translate(-50%, 100%)";
+  }
+
+  window.hideMiniCard = hideMiniCard;
+
+  async function loadRestaurants() {
+    list.innerHTML = '<div class="p-4 text-center font-body-sm text-on-surface-variant">식당 데이터를 불러오는 중입니다.</div>';
+    try {
+      const data = await api.getRestaurants();
+      restaurants = api.unwrapResults(data);
+      renderList();
+      renderMarkers();
+      setStatus("");
+    } catch (error) {
+      list.innerHTML = `<div class="p-4 text-center font-body-sm text-error">${api.escapeHtml(error.message)}</div>`;
+    }
+  }
+
+  document.getElementById("reload-map").addEventListener("click", loadRestaurants);
+
+  loadRestaurants();
+  loadKakaoMaps()
+    .then(initMap)
+    .catch((error) => setStatus(error.message));
+</script>
+</body>
+</html>

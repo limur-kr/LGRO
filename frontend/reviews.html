@@ -1,0 +1,328 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>짬뽕지도 - AI 분석</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          background: "#f9f9f9",
+          surface: "#ffffff",
+          "surface-container": "#eeeeee",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-high": "#e8e8e8",
+          "surface-container-highest": "#e2e2e2",
+          "surface-variant": "#e2e2e2",
+          "inverse-surface": "#2f3131",
+          "on-background": "#1a1c1c",
+          "on-surface": "#1a1c1c",
+          "on-surface-variant": "#5b403d",
+          primary: "#b7131a",
+          "primary-container": "#db322f",
+          "primary-fixed": "#ffdad6",
+          "on-primary": "#ffffff",
+          outline: "#906f6c",
+          "outline-variant": "#e4beb9",
+          error: "#ba1a1a"
+        },
+        spacing: { "margin-desktop": "48px", "container-max": "1280px", gutter: "16px" },
+        fontFamily: {
+          "display-lg": ["Hanken Grotesk"],
+          "headline-lg": ["Hanken Grotesk"],
+          "title-md": ["Hanken Grotesk"],
+          "label-caps": ["JetBrains Mono"],
+          "body-sm": ["Inter"],
+          "body-lg": ["Inter"]
+        },
+        fontSize: {
+          "display-lg": ["48px", { lineHeight: "56px", fontWeight: "800" }],
+          "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+          "title-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+          "label-caps": ["12px", { lineHeight: "16px", fontWeight: "700" }],
+          "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+          "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; }
+  .hard-shadow { box-shadow: 4px 4px 0 0 #1a1c1c; }
+  .hard-shadow-sm { box-shadow: 2px 2px 0 0 #1a1c1c; }
+</style>
+</head>
+<body class="bg-background text-on-background font-body-lg">
+<header class="bg-surface border-b-2 border-on-background top-0 sticky z-50">
+  <nav class="flex justify-between items-center w-full px-4 md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
+    <div class="flex items-center gap-8">
+      <a class="font-display-lg text-3xl md:text-display-lg font-black text-primary" href="/">짬뽕지도</a>
+      <div class="hidden md:flex gap-6">
+        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="/">랭킹</a>
+        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="map.html">지도</a>
+        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="report.html">제보</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <form class="hidden md:flex items-center bg-surface-container-high px-4 py-2 border border-outline" data-search-form>
+        <span class="material-symbols-outlined text-on-surface-variant">search</span>
+        <input class="bg-transparent border-none focus:ring-0 text-body-sm px-2" name="q" placeholder="지역, 맛집 검색" type="search" />
+      </form>
+      <button class="bg-primary text-on-primary px-6 py-2 font-bold hard-shadow-sm active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all" data-auth-button type="button">로그인</button>
+    </div>
+  </nav>
+</header>
+
+<main class="max-w-container-max mx-auto px-4 md:px-margin-desktop py-8 grid grid-cols-12 gap-gutter" id="page-root">
+  <div class="col-span-12 border-2 border-on-background bg-surface p-8 text-center font-title-md text-on-surface-variant">식당 정보를 불러오는 중입니다.</div>
+</main>
+
+<footer class="bg-inverse-surface border-t-4 border-primary mt-20">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-4 md:px-margin-desktop py-12 max-w-container-max mx-auto text-on-primary gap-6">
+    <div class="space-y-4">
+      <h2 class="font-title-md text-title-md font-bold text-white">JJAMPPONG MAP</h2>
+      <p class="font-label-caps text-label-caps text-surface-variant">© 2024 JJAMPPONG MAP. ALL RIGHTS RESERVED.</p>
+    </div>
+    <div class="flex gap-8">
+      <a class="font-body-sm text-body-sm text-surface-variant hover:text-primary-fixed transition-colors" href="/">랭킹</a>
+      <a class="font-body-sm text-body-sm text-surface-variant hover:text-primary-fixed transition-colors" href="map.html">지도</a>
+      <a class="font-body-sm text-body-sm text-surface-variant hover:text-primary-fixed transition-colors" href="report.html">제보</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/src/api.js"></script>
+<script type="module">
+  const api = window.JjamppongAPI;
+  const root = document.getElementById("page-root");
+  const params = new URLSearchParams(location.search);
+  const restaurantId = params.get("id");
+
+  function aspectLabel(detail) {
+    return detail.label || {
+      soup: "국물",
+      spiciness: "매운맛",
+      fire: "불향",
+      noodle: "면",
+      topping: "토핑",
+      quantity: "양",
+      price: "가격",
+      waiting: "대기",
+      hygiene: "위생",
+      service: "서비스",
+      return_intent: "재방문"
+    }[detail.aspect] || detail.aspect;
+  }
+
+  function renderAspectBars(sentiment) {
+    const aspects = sentiment && Array.isArray(sentiment.aspect_scores)
+      ? sentiment.aspect_scores
+      : sentiment && Array.isArray(sentiment.aspect_details)
+        ? sentiment.aspect_details
+        : [];
+    if (!aspects.length) {
+      return '<div class="border border-outline-variant bg-surface p-4 text-body-sm text-on-surface-variant">세부 감성 점수가 없습니다.</div>';
+    }
+    return aspects.map((detail) => {
+      const score = Math.max(0, Math.min(100, Number(detail.score || 0)));
+      return `
+        <div>
+          <div class="flex justify-between mb-2">
+            <span class="font-label-caps text-label-caps">${api.escapeHtml(aspectLabel(detail))}</span>
+            <span class="font-label-caps text-label-caps text-primary">${score}</span>
+          </div>
+          <div class="h-3 bg-surface-variant border border-on-background">
+            <div class="h-full bg-primary" style="width: ${score}%"></div>
+          </div>
+          ${detail.summary ? `<p class="mt-2 text-body-sm text-on-surface-variant">${api.escapeHtml(detail.summary)}</p>` : ""}
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderKeywords(sentiment) {
+    const keywords = sentiment && Array.isArray(sentiment.keywords) ? sentiment.keywords : [];
+    if (!keywords.length) {
+      return '<span class="text-body-sm text-on-surface-variant">키워드 데이터가 없습니다.</span>';
+    }
+    return keywords.slice(0, 20).map((keyword, index) => {
+      const size = index < 3 ? "text-3xl" : index < 8 ? "text-xl" : "text-base";
+      const color = keyword.sentiment === "negative" ? "text-error" : index % 2 ? "text-on-surface" : "text-primary";
+      return `<span class="${size} ${color} font-black">${api.escapeHtml(keyword.keyword)}</span>`;
+    }).join("");
+  }
+
+  function renderMenus(restaurant) {
+    const menus = Array.isArray(restaurant.menus) ? restaurant.menus : [];
+    if (!menus.length) {
+      return '<div class="border border-outline p-4 text-body-sm text-on-surface-variant">등록된 메뉴가 없습니다.</div>';
+    }
+    return menus.map((menu) => `
+      <div class="border border-outline p-4 bg-surface">
+        <div class="flex justify-between gap-4">
+          <h4 class="font-title-md text-title-md">${api.escapeHtml(menu.name)}</h4>
+          <span class="font-label-caps text-label-caps text-primary">${api.formatPrice(menu.price)}</span>
+        </div>
+        ${menu.description ? `<p class="mt-2 text-body-sm text-on-surface-variant">${api.escapeHtml(menu.description)}</p>` : ""}
+      </div>
+    `).join("");
+  }
+
+  function renderGallery(restaurant) {
+    const images = Array.isArray(restaurant.images) ? restaurant.images : [];
+    const gallery = images.length ? images.slice(0, 4) : [{ image_url: api.getPrimaryImage(restaurant), caption: restaurant.name }];
+    return gallery.map((image) => `
+      <div class="border border-outline overflow-hidden aspect-square bg-surface-container">
+        <img class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" src="${api.resolveImageUrl(image.image_url || image.image)}" alt="${api.escapeHtml(image.caption || restaurant.name)}" />
+      </div>
+    `).join("");
+  }
+
+  function renderPage(restaurant, sentiment) {
+    const image = api.getPrimaryImage(restaurant);
+    root.innerHTML = `
+      <div class="col-span-12 lg:col-span-8 space-y-8">
+        <section class="border-2 border-on-background p-0 overflow-hidden bg-surface-container-lowest">
+          <div class="relative h-96 w-full">
+            <img class="w-full h-full object-cover" src="${image}" alt="${api.escapeHtml(restaurant.name)}" />
+            <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/90 to-transparent text-white">
+              <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                  <div class="flex flex-wrap items-center gap-3 mb-2">
+                    <span class="bg-primary text-white font-label-caps text-label-caps px-3 py-1">${api.escapeHtml(api.soupStyleLabel(restaurant.soup_style))}</span>
+                    <span class="bg-on-background text-white font-label-caps text-label-caps px-3 py-1">${api.escapeHtml(api.regionName(restaurant))}</span>
+                  </div>
+                  <h1 class="font-display-lg text-display-lg mb-1">${api.escapeHtml(restaurant.name)}</h1>
+                  <p class="font-title-md text-title-md text-surface-variant opacity-90">${api.escapeHtml(restaurant.address || "주소 미상")}</p>
+                </div>
+                <div class="flex flex-col md:items-end">
+                  <div class="text-display-lg font-black text-primary-fixed">${api.formatScore(restaurant.sentiment_score)}</div>
+                  <span class="font-label-caps text-label-caps">AI RELIABILITY SCORE</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="border-2 border-on-background bg-surface overflow-hidden">
+          <div class="bg-inverse-surface p-4 flex flex-col md:flex-row gap-3 justify-between md:items-center">
+            <h2 class="text-white font-headline-lg text-headline-lg flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary-fixed">analytics</span>
+              AI ANALYTICAL REPORT
+            </h2>
+            <span class="font-label-caps text-label-caps text-surface-variant">UPDATED: ${api.formatDate(sentiment && (sentiment.analyzed_at || sentiment.created_at))}</span>
+          </div>
+          <div class="p-8 grid md:grid-cols-2 gap-12 bg-primary/5">
+            <div>
+              <h3 class="font-title-md text-title-md mb-6 text-primary border-l-4 border-primary pl-4">SENTIMENT DIMENSIONS</h3>
+              <div class="space-y-5">${sentiment ? renderAspectBars(sentiment) : '<div class="border border-outline-variant bg-surface p-4 text-body-sm text-on-surface-variant">저장된 AI 감성분석 결과가 없습니다.</div>'}</div>
+            </div>
+            <div>
+              <h3 class="font-title-md text-title-md mb-6 text-primary border-l-4 border-primary pl-4">KEYWORD VOX POPULI</h3>
+              <div class="min-h-64 bg-surface-container border border-outline-variant p-8 flex flex-wrap justify-center items-center content-center gap-3 overflow-hidden">
+                ${sentiment ? renderKeywords(sentiment) : '<span class="text-body-sm text-on-surface-variant">키워드 데이터가 없습니다.</span>'}
+              </div>
+              <p class="mt-4 font-body-sm text-body-sm text-on-surface-variant italic">${api.escapeHtml((sentiment && (sentiment.summary || sentiment.ai_one_liner)) || restaurant.description || "식당 상세 데이터와 AI 분석 결과를 함께 확인할 수 있습니다.")}</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex justify-between items-end border-b-2 border-on-background pb-2">
+            <h2 class="font-headline-lg text-headline-lg flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">menu_book</span>
+              MENU & GALLERY
+            </h2>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">${renderMenus(restaurant)}</div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">${renderGallery(restaurant)}</div>
+        </section>
+      </div>
+
+      <aside class="col-span-12 lg:col-span-4 space-y-6">
+        <div class="grid grid-cols-2 gap-4">
+          <button class="bg-primary text-on-primary py-4 px-6 hard-shadow flex flex-col items-center gap-1 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all" type="button">
+            <span class="material-symbols-outlined text-3xl">share</span>
+            <span class="font-bold">SHARE</span>
+          </button>
+          <button class="bg-surface text-on-surface border-2 border-on-background py-4 px-6 hard-shadow flex flex-col items-center gap-1 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all" type="button">
+            <span class="material-symbols-outlined text-3xl">bookmark</span>
+            <span class="font-bold">SAVE</span>
+          </button>
+        </div>
+
+        <section class="border-2 border-on-background bg-surface p-6 space-y-6">
+          <h3 class="font-title-md text-title-md border-b-2 border-on-background pb-2">운영 정보</h3>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-1">schedule</span>
+            <div>
+              <p class="font-bold">영업시간</p>
+              <p class="text-body-sm text-on-surface-variant whitespace-pre-line">${api.escapeHtml(restaurant.opening_hours || "등록된 영업시간이 없습니다.")}</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-1">location_on</span>
+            <div>
+              <p class="font-bold">주소</p>
+              <p class="text-body-sm text-on-surface-variant">${api.escapeHtml([restaurant.address, restaurant.detail_address].filter(Boolean).join(" ") || "주소 미상")}</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-1">call</span>
+            <div>
+              <p class="font-bold">전화번호</p>
+              <p class="text-body-sm text-on-surface-variant">${api.escapeHtml(restaurant.phone || "전화번호 미상")}</p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-outline">
+            <a class="w-full bg-inverse-surface text-white py-4 font-bold flex items-center justify-center gap-2 hover:bg-black transition-colors" href="report.html">
+              <span class="material-symbols-outlined">campaign</span>
+              정보 제보하기
+            </a>
+          </div>
+        </section>
+
+        <section class="bg-primary/5 border-2 border-primary/20 p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-outlined text-primary">auto_awesome</span>
+            <h4 class="font-title-md text-title-md text-primary">AI QUICK INSIGHT</h4>
+          </div>
+          <p class="text-body-sm leading-relaxed text-on-surface-variant">${api.escapeHtml((sentiment && (sentiment.summary || sentiment.ai_one_liner)) || restaurant.description || "아직 요약 분석이 없습니다.")}</p>
+        </section>
+      </aside>
+    `;
+  }
+
+  async function loadPage() {
+    if (!restaurantId) {
+      root.innerHTML = '<div class="col-span-12 border-2 border-on-background bg-surface p-8 text-center font-title-md text-error">식당 ID가 없습니다. reviews.html?id={id} 형식으로 접근해 주세요.</div>';
+      return;
+    }
+
+    try {
+      const restaurant = await api.getRestaurantDetail(restaurantId);
+      let sentiment = null;
+      try {
+        sentiment = await api.getRestaurantSentiment(restaurantId);
+      } catch (error) {
+        if (error.status !== 404) {
+          console.warn(error);
+        }
+      }
+      renderPage(restaurant, sentiment);
+    } catch (error) {
+      root.innerHTML = `<div class="col-span-12 border-2 border-on-background bg-surface p-8 text-center font-title-md text-error">${api.escapeHtml(error.message)}</div>`;
+    }
+  }
+
+  loadPage();
+</script>
+</body>
+</html>

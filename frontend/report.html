@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>짬뽕지도 - 제보</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .hard-offset { box-shadow: 4px 4px 0 0 #1a1c1c; }
+  .hard-offset:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 #1a1c1c; }
+</style>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          background: "#f9f9f9",
+          surface: "#ffffff",
+          "surface-container": "#eeeeee",
+          "surface-container-low": "#f3f3f3",
+          "surface-variant": "#e2e2e2",
+          "inverse-surface": "#2f3131",
+          "on-background": "#1a1c1c",
+          "on-surface": "#1a1c1c",
+          "on-surface-variant": "#5b403d",
+          primary: "#b7131a",
+          "primary-container": "#db322f",
+          "primary-fixed": "#ffdad6",
+          "on-primary": "#ffffff",
+          outline: "#906f6c",
+          error: "#ba1a1a"
+        },
+        spacing: { "margin-desktop": "48px", "container-max": "1280px", gutter: "16px" },
+        fontFamily: {
+          "display-lg": ["Hanken Grotesk"],
+          "headline-lg": ["Hanken Grotesk"],
+          "title-md": ["Hanken Grotesk"],
+          "label-caps": ["JetBrains Mono"],
+          "body-sm": ["Inter"],
+          "body-lg": ["Inter"]
+        },
+        fontSize: {
+          "display-lg": ["48px", { lineHeight: "56px", fontWeight: "800" }],
+          "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+          "title-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+          "label-caps": ["12px", { lineHeight: "16px", fontWeight: "700" }],
+          "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+          "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }]
+        }
+      }
+    }
+  };
+</script>
+</head>
+<body class="bg-background text-on-background font-body-lg overflow-x-hidden">
+<nav class="bg-surface border-b-2 border-on-background sticky top-0 w-full z-50">
+  <div class="flex justify-between items-center w-full px-4 md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
+    <div class="flex items-center gap-8">
+      <a class="font-display-lg text-3xl md:text-display-lg font-black text-primary" href="/">짬뽕지도</a>
+      <div class="hidden md:flex gap-6">
+        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="/">랭킹</a>
+        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="map.html">지도</a>
+        <a class="font-title-md text-title-md text-primary border-b-4 border-primary pb-1" href="report.html">제보</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-4 flex-1 max-w-md ml-8">
+      <form class="relative w-full hidden md:block" data-search-form>
+        <input class="w-full bg-surface-container-low border-2 border-on-background py-2 px-4 focus:outline-none focus:ring-0 focus:border-primary font-body-sm" name="q" placeholder="지역, 식당 또는 불맛 키워드 검색" type="search" />
+        <button class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant" type="submit">search</button>
+      </form>
+      <button class="bg-on-background text-on-primary px-6 py-2 font-title-md hard-offset transition-all" data-auth-button type="button">로그인</button>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-container-max mx-auto px-4 md:px-margin-desktop py-12">
+  <section class="grid grid-cols-12 gap-gutter items-start">
+    <div class="col-span-12 lg:col-span-5 border-2 border-on-background bg-surface-container p-8">
+      <p class="font-label-caps text-label-caps text-primary mb-3">REPORT</p>
+      <h1 class="font-headline-lg text-headline-lg mb-4">새 짬뽕 맛집 제보</h1>
+      <p class="text-on-surface-variant leading-relaxed">로그인 후 제보를 남기면 운영자가 확인할 수 있는 문의 데이터로 등록됩니다. 공개 여부를 선택할 수 있습니다.</p>
+      <div class="mt-8 bg-primary-container text-on-primary p-5 border-2 border-on-background">
+        <h2 class="font-title-md text-title-md mb-2">전송 API</h2>
+        <p class="font-label-caps text-label-caps">POST /api/questions/</p>
+      </div>
+    </div>
+
+    <form class="col-span-12 lg:col-span-7 border-2 border-on-background bg-surface p-8 space-y-6 hard-offset" id="report-form">
+      <label class="block">
+        <span class="mb-2 block font-label-caps text-label-caps text-on-surface-variant">제목</span>
+        <input class="w-full border-2 border-on-background bg-surface-container-low px-4 py-3 focus:border-primary focus:ring-0" name="title" placeholder="예: 서울 종로 신규 짬뽕 맛집 제보" required />
+      </label>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <label class="block">
+          <span class="mb-2 block font-label-caps text-label-caps text-on-surface-variant">식당명</span>
+          <input class="w-full border-2 border-on-background bg-surface-container-low px-4 py-3 focus:border-primary focus:ring-0" name="restaurant_name" placeholder="식당명을 입력하세요" />
+        </label>
+        <label class="block">
+          <span class="mb-2 block font-label-caps text-label-caps text-on-surface-variant">지역/주소</span>
+          <input class="w-full border-2 border-on-background bg-surface-container-low px-4 py-3 focus:border-primary focus:ring-0" name="address" placeholder="예: 서울 종로구" />
+        </label>
+      </div>
+
+      <label class="block">
+        <span class="mb-2 block font-label-caps text-label-caps text-on-surface-variant">제보 내용</span>
+        <textarea class="min-h-48 w-full border-2 border-on-background bg-surface-container-low px-4 py-3 focus:border-primary focus:ring-0" name="content" placeholder="맛, 메뉴, 가격, 영업 정보, 추천 이유를 적어주세요." required></textarea>
+      </label>
+
+      <label class="flex items-center gap-3 cursor-pointer">
+        <input checked class="w-5 h-5 rounded-none border-2 border-on-background text-primary focus:ring-0" name="is_public" type="checkbox" />
+        <span class="font-body-sm text-body-sm text-on-surface-variant">공개 제보로 등록</span>
+      </label>
+
+      <div class="flex flex-col md:flex-row md:items-center gap-4">
+        <button class="bg-primary text-on-primary px-8 py-3 font-title-md hard-offset transition-all" type="submit">제보 제출</button>
+        <p class="min-h-6 font-body-sm text-body-sm" id="report-message"></p>
+      </div>
+    </form>
+  </section>
+</main>
+
+<footer class="bg-inverse-surface border-t-4 border-primary">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-4 md:px-margin-desktop py-12 max-w-container-max mx-auto gap-6">
+    <div>
+      <div class="font-title-md text-title-md font-bold text-white mb-4">짬뽕지도</div>
+      <p class="font-body-sm text-surface-variant max-w-xs">데이터 기반 짬뽕 맛집 분석 플랫폼</p>
+    </div>
+    <p class="font-body-sm text-surface-variant">© 2024 JJAMPPONG MAP. ALL RIGHTS RESERVED.</p>
+  </div>
+</footer>
+
+<script type="module" src="/src/api.js"></script>
+<script type="module">
+  const api = window.JjamppongAPI;
+  const form = document.getElementById("report-form");
+  const message = document.getElementById("report-message");
+
+  function setMessage(text, isError) {
+    message.textContent = text;
+    message.classList.toggle("text-error", Boolean(isError));
+    message.classList.toggle("text-primary", !isError);
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!api.requireAuth()) {
+      setMessage("로그인 후 제출할 수 있습니다.", true);
+      return;
+    }
+
+    const formData = Object.fromEntries(new FormData(form).entries());
+    const contentParts = [
+      formData.restaurant_name ? `식당명: ${formData.restaurant_name}` : "",
+      formData.address ? `지역/주소: ${formData.address}` : "",
+      "",
+      formData.content || "",
+    ].filter((part, index) => part || index === 2);
+
+    setMessage("제보를 제출하는 중입니다...");
+    try {
+      await api.submitQuestion({
+        title: formData.title,
+        content: contentParts.join("\n"),
+        is_public: Boolean(formData.is_public),
+      });
+      form.reset();
+      form.elements.is_public.checked = true;
+      setMessage("제보가 성공적으로 접수되었습니다.");
+    } catch (error) {
+      if (error.status === 401) {
+        api.openAuthModal("login");
+      }
+      setMessage(error.message || "제보 제출에 실패했습니다.", true);
+    }
+  });
+</script>
+</body>
+</html>
