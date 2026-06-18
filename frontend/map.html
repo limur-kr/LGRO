@@ -194,7 +194,7 @@
 
   function initMap() {
     const center = new kakao.maps.LatLng(37.5665, 126.9780);
-    map = new kakao.maps.Map(document.getElementById("map"), { center, level: 8 });
+    map = new kakao.maps.Map(document.getElementById("map"), { center, level: 6 });
     bounds = new kakao.maps.LatLngBounds();
     document.getElementById("zoom-in").addEventListener("click", () => map.setLevel(Math.max(1, map.getLevel() - 1)));
     document.getElementById("zoom-out").addEventListener("click", () => map.setLevel(map.getLevel() + 1));
@@ -236,6 +236,7 @@
       return;
     }
     map.setBounds(bounds);
+    if (map.getLevel() > 4) map.setLevel(7);
   }
 
   function renderList() {
