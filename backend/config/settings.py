@@ -119,7 +119,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-
+# sqlite3
 DATABASES = {
     "default": database_from_url(DATABASE_URL)
     if DATABASE_URL
@@ -129,6 +129,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'jjambbong_db',
+#         'USER': 'jjambbong_user',
+#         'PASSWORD': 'jb2026',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -152,11 +162,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "ko-kr"
+LANGUAGE_CODE = os.getenv("DJANGO_LANGUAGE_CODE", "ko-kr")
 
 TIME_ZONE = "Asia/Seoul"
 
-USE_I18N = True
+USE_I18N = env_bool("DJANGO_USE_I18N", True)
 
 USE_TZ = True
 

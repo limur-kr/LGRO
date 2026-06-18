@@ -1,223 +1,363 @@
-﻿<!DOCTYPE html>
-<html class="light" lang="ko">
-<head>
-<meta charset="utf-8" />
-<meta content="width=device-width, initial-scale=1.0" name="viewport" />
-<title>짬뽕지도 - 랭킹</title>
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JJAMPPONG TOP 100 - 랭킹</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-<style>
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .hard-shadow { box-shadow: 4px 4px 0 0 #1a1c1c; }
-  .hard-shadow:hover { box-shadow: 2px 2px 0 0 #1a1c1c; transform: translate(2px, 2px); }
-  .active-rank-tab { border-bottom-width: 4px; }
-</style>
-<script>
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          background: "#f9f9f9",
-          surface: "#ffffff",
-          "surface-container": "#eeeeee",
-          "surface-container-high": "#e8e8e8",
-          "surface-variant": "#e2e2e2",
-          "inverse-surface": "#2f3131",
-          "on-background": "#1a1c1c",
-          "on-surface": "#1a1c1c",
-          "on-surface-variant": "#5b403d",
-          primary: "#b7131a",
-          "primary-container": "#db322f",
-          "on-primary": "#ffffff",
-          outline: "#906f6c",
-          error: "#ba1a1a"
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#00799c",
+                    "tertiary-fixed": "#bee9ff",
+                    "background": "#f6f9ff",
+                    "surface-container": "#e9eef5",
+                    "secondary-container": "#d8363a",
+                    "on-secondary-container": "#fffbff",
+                    "on-primary-container": "#fff2f0",
+                    "surface-variant": "#dee3ea",
+                    "on-secondary-fixed": "#410004",
+                    "inverse-on-surface": "#ecf1f8",
+                    "primary-fixed-dim": "#ffb3ac",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#eff4fb",
+                    "secondary": "#b51925",
+                    "primary-fixed": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-primary": "#ffb3ac",
+                    "surface-dim": "#d5dae1",
+                    "secondary-fixed-dim": "#ffb3ae",
+                    "surface-container-highest": "#dee3ea",
+                    "tertiary": "#005f7b",
+                    "primary-container": "#d32f2f",
+                    "primary": "#af101a",
+                    "on-surface-variant": "#5b403d",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f6f9ff",
+                    "on-error": "#ffffff",
+                    "on-surface": "#171c21",
+                    "on-primary-fixed-variant": "#930010",
+                    "on-primary-fixed": "#410003",
+                    "secondary-fixed": "#ffdad7",
+                    "outline": "#8f6f6c",
+                    "on-background": "#171c21",
+                    "surface-bright": "#f6f9ff",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#ba1a20",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#001f2a",
+                    "tertiary-fixed-dim": "#7bd1f8",
+                    "outline-variant": "#e4beba",
+                    "on-secondary-fixed-variant": "#930015",
+                    "surface-container-high": "#e4e9f0",
+                    "on-tertiary-fixed-variant": "#004d65",
+                    "inverse-surface": "#2b3136",
+                    "on-tertiary-container": "#e9f7ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-md": "32px",
+                    "element-gap": "24px",
+                    "base": "8px",
+                    "container-padding": "32px",
+                    "margin-lg": "64px",
+                    "margin-sm": "16px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "label-sm": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}]
+            }
+          },
         },
-        spacing: { "margin-desktop": "48px", "container-max": "1280px", gutter: "16px", "margin-mobile": "16px" },
-        fontFamily: {
-          "display-lg": ["Hanken Grotesk"],
-          "headline-lg": ["Hanken Grotesk"],
-          "title-md": ["Hanken Grotesk"],
-          "label-caps": ["JetBrains Mono"],
-          "body-sm": ["Inter"],
-          "body-lg": ["Inter"]
-        },
-        fontSize: {
-          "display-lg": ["48px", { lineHeight: "56px", fontWeight: "800" }],
-          "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
-          "title-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
-          "label-caps": ["12px", { lineHeight: "16px", fontWeight: "700" }],
-          "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
-          "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }]
-        }
       }
-    }
-  };
-</script>
+    </script>
+<style>
+        .neumorph-extruded {
+            box-shadow: 6px 6px 12px #A3B1C6, -6px -6px 12px #FFFFFF;
+        }
+        .neumorph-sunken {
+            box-shadow: inset 4px 4px 8px #A3B1C6, inset -4px -4px 8px #FFFFFF;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f6f9ff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .transition-soft {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
 </head>
-<body class="bg-background text-on-background font-body-lg overflow-x-hidden">
-<header class="bg-surface border-b-2 border-on-background sticky top-0 z-50">
-  <div class="flex justify-between items-center w-full px-4 md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
-    <div class="flex items-center gap-8">
-      <a class="font-display-lg text-3xl md:text-display-lg font-black text-primary" href="/">짬뽕지도</a>
-      <nav class="hidden md:flex gap-6">
-        <a class="font-title-md text-title-md text-primary border-b-4 border-primary pb-1" href="/">랭킹</a>
-        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="map.html">지도</a>
-        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="report.html">제보</a>
-      </nav>
-    </div>
-    <div class="flex items-center gap-4">
-      <form class="relative hidden sm:block" data-search-form>
-        <input class="bg-surface-container text-on-surface border-2 border-on-background px-4 py-2 w-64 focus:outline-none font-body-sm" name="q" placeholder="지역 또는 매장 검색" type="search" />
-        <button class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant" type="submit">search</button>
-      </form>
-      <button class="bg-primary text-on-primary px-6 py-2 font-title-md hard-shadow transition-all active:scale-95 duration-100" data-auth-button type="button">로그인</button>
-    </div>
-  </div>
+<body class="bg-background text-on-surface">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-margin-md py-3 w-full sticky top-0 z-50 bg-[#121212] shadow-md">
+<a class="text-[24px] font-bold text-primary tracking-tight" href="index.html">
+        짬뽕여지도
+    </a>
+<nav class="hidden md:flex gap-10 items-center">
+<a class="text-white border-b-2 border-primary pb-1 font-medium text-body-md" href="index.html">랭킹</a>
+<a class="text-white/80 font-medium hover:text-white transition-colors duration-300 text-body-md" href="map.html">지도</a>
+<a class="text-white/80 font-medium hover:text-white transition-colors duration-300 text-body-md" href="report.html">제보하기</a>
+</nav>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex items-center bg-[#242424] rounded-md px-3 py-1.5 w-64 border border-white/10">
+<span class="material-symbols-outlined text-white/50 text-[20px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-white text-[14px] px-2 w-full placeholder:text-white/30" placeholder="짬뽕 맛집 검색..." type="text"/>
+</div>
+<button class="px-4 py-1.5 border border-white rounded text-white text-body-md font-medium hover:bg-white hover:text-black transition-all">
+            로그인
+        </button>
+</div>
 </header>
-
-<main class="max-w-container-max mx-auto px-4 md:px-margin-desktop py-12">
-  <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
-    <div>
-      <h1 class="font-headline-lg text-headline-lg text-on-background mb-2">실시간 짬뽕 랭킹</h1>
-      <p class="text-on-surface-variant font-body-lg">백엔드 API가 제공하는 전국 짬뽕 맛집 데이터를 확인하세요.</p>
-    </div>
-    <div class="flex items-center gap-3">
-      <label class="font-label-caps text-label-caps text-on-surface-variant uppercase" for="region-filter">Region Filter</label>
-      <select class="bg-surface border-2 border-on-background px-4 py-2 font-title-md focus:ring-0 focus:border-primary cursor-pointer" id="region-filter">
-        <option value="">전국</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-2 md:grid-cols-4 border-2 border-on-background mb-8 bg-surface" id="rank-tabs">
-    <button class="py-4 font-title-md border-r-2 border-on-background bg-primary text-on-primary active-rank-tab border-primary transition-colors" type="button">전국종합</button>
-    <button class="py-4 font-title-md border-r-2 border-on-background text-on-surface-variant hover:bg-surface-container transition-colors" type="button">불향마스터</button>
-    <button class="py-4 font-title-md border-r-2 border-on-background text-on-surface-variant hover:bg-surface-container transition-colors" type="button">가성비끝판왕</button>
-    <button class="py-4 font-title-md text-on-surface-variant hover:bg-surface-container transition-colors" type="button">매운맛지옥</button>
-  </div>
-
-  <section class="border-2 border-on-background bg-surface overflow-hidden">
-    <div class="hidden md:grid grid-cols-[80px_1fr_120px_140px_120px_160px] bg-inverse-surface text-on-primary py-3 px-6 font-label-caps text-label-caps border-b-2 border-on-background">
-      <div>RANK</div>
-      <div>RESTAURANT INFO</div>
-      <div class="text-center">REGION</div>
-      <div class="text-center">SPICINESS</div>
-      <div class="text-center">AI SCORE</div>
-      <div class="text-right">ACTION</div>
-    </div>
-    <div class="divide-y-2 divide-on-background min-h-[240px]" id="restaurant-list">
-      <div class="p-8 text-center font-title-md text-on-surface-variant">랭킹 데이터를 불러오는 중입니다.</div>
-    </div>
-  </section>
-
-  <div class="mt-12 flex justify-center gap-2" id="pagination"></div>
+<main class="max-w-7xl mx-auto px-margin-md py-margin-lg">
+<!-- Hero Section -->
+<section class="mb-margin-lg text-center">
+<h1 class="font-headline-xl text-headline-xl text-primary mb-4">불맛 마스터 랭킹</h1>
+<p class="font-body-md text-on-surface-variant max-w-2xl mx-auto">전국에서 가장 강렬하고 정통적인 짬뽕 맛집을 AI 미각 엔진이 실시간으로 분석하여 순위를 매깁니다.</p>
+</section>
+<!-- Tab Switcher -->
+<div class="flex flex-wrap justify-center gap-6 mb-margin-lg">
+<button class="neumorph-extruded px-8 py-3 rounded-full font-headline-lg text-body-md text-primary bg-background border-2 border-primary/10 transition-soft active:shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF]">
+                전국
+            </button>
+<button class="neumorph-sunken px-8 py-3 rounded-full font-headline-lg text-body-md text-on-surface-variant bg-background transition-soft">
+                불맛 마스터
+            </button>
+<button class="neumorph-extruded px-8 py-3 rounded-full font-headline-lg text-body-md text-on-surface-variant bg-background transition-soft hover:scale-105 active:shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF]">
+                매운맛 전설
+            </button>
+<button class="neumorph-extruded px-8 py-3 rounded-full font-headline-lg text-body-md text-on-surface-variant bg-background transition-soft hover:scale-105 active:shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF]">
+                숨은 맛집
+            </button>
+</div>
+<!-- Ranking List -->
+<div class="grid grid-cols-1 gap-10">
+<!-- Rank 1: Featured Card -->
+<div class="neumorph-extruded rounded-lg p-margin-md flex flex-col md:flex-row gap-8 bg-background border-4 border-primary/5 relative overflow-hidden">
+<div class="absolute top-0 left-0 bg-primary text-on-primary px-10 py-2 font-headline-xl text-headline-lg -rotate-12 -translate-x-4 -translate-y-2 shadow-lg">
+                    #1
+                </div>
+<div class="w-full md:w-1/3 aspect-video md:aspect-square rounded-lg overflow-hidden neumorph-sunken p-2">
+<img class="w-full h-full object-cover rounded-lg" data-alt="A gourmet bowl of premium Jjamppong noodle soup with fresh mussels, shrimp, and grilled squid. The soup is a vibrant, fiery crimson red, reflecting a high-end Neumorphic and Soft UI style. The lighting is soft and professional, highlighting the steam rising from the bowl against a minimalist, light-mode background with clean red accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqvsWSmzT7qnVVFAzvN2afThkfZp9LH_zmnbuxxgLyoCusvaoFVK-B82z1EHJBWv83xcQqdlKFz6_J_U5gd1E2c0lfREnC5xFXYtyHGVY0WFE1DL5Cdf-cd_RuPPcp_bYD0Bn_5cwquoB6oIQm9cxfl_Quaaudc0_dlCN9DOBq4rOkzSTEvwQ70g6nmXsn_ylSB1t6oalJkTUZNhVCJVrTDgh-KZQTjzjk61j-xjJVNdB9vYp_g5V0yjsc5GbsJvZYxgfLAu0KMQ"/>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-xl text-headline-lg text-on-surface">Red Dragon Inferno</h2>
+<div class="text-right">
+<span class="font-headline-xl text-headline-xl text-primary leading-none">98.4</span>
+<p class="text-label-sm font-label-sm text-primary uppercase tracking-widest">AI 미각 점수</p>
+</div>
+</div>
+<p class="flex items-center gap-1 text-on-surface-variant mb-4 font-body-md">
+<span class="material-symbols-outlined text-primary text-[18px]">location_on</span>
+                            서울 강남구
+                        </p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="neumorph-sunken px-4 py-1 rounded-full text-label-sm font-label-sm text-primary bg-background">불맛가득</span>
+<span class="neumorph-sunken px-4 py-1 rounded-full text-label-sm font-label-sm text-primary bg-background">신선해산물</span>
+<span class="neumorph-sunken px-4 py-1 rounded-full text-label-sm font-label-sm text-primary bg-background">수타면</span>
+</div>
+<div class="flex items-center gap-4 mb-6">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">맵기 단계:</span>
+<div class="flex gap-2">
+<div class="w-6 h-6 rounded-full bg-primary neumorph-extruded"></div>
+<div class="w-6 h-6 rounded-full bg-primary neumorph-extruded"></div>
+<div class="w-6 h-6 rounded-full bg-primary neumorph-extruded"></div>
+<div class="w-6 h-6 rounded-full bg-primary neumorph-extruded"></div>
+<div class="w-6 h-6 rounded-full bg-primary/20 neumorph-sunken"></div>
+</div>
+<span class="ml-auto flex items-center gap-1 text-secondary font-bold">
+<span class="material-symbols-outlined">trending_up</span> 급상승 트렌드
+                            </span>
+</div>
+</div>
+<button class="neumorph-extruded w-full md:w-fit px-12 py-4 rounded-lg bg-primary text-on-primary font-headline-lg text-body-md hover:scale-[1.02] active:shadow-[inset_4px_4px_8px_#962121,inset_-4px_-4px_8px_#FF7070] transition-all">
+                        상세 정보 보기
+                    </button>
+</div>
+</div>
+<!-- Ranks 2-10 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Rank 2 -->
+<div class="neumorph-extruded rounded-lg p-margin-sm flex gap-6 bg-background items-center transition-soft hover:scale-[1.01]">
+<div class="font-headline-xl text-headline-lg text-primary/30 w-12 text-center">#2</div>
+<div class="w-24 h-24 rounded-lg overflow-hidden neumorph-sunken flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close-up of a rustic noodle dish with intense red broth and topped with abundant grilled scallops." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArpMouUq8Ad2DwohS10ZzKG7dH4nG2YLhMv1TyMt_VNvAozytVyWXZv7y63dMRw_Mzlt3PRDzeo9sdYuxXpzQt32yKNucxHUJ4WNCQGe51A6Zi6CubUOrFa7ltJgD41yfXyjRP3heWYKA6EG850gJ2GYEaOuXUCTTrRZXVGqyOqTjy3dKq5aptzXtL8QtZbYY7Hp8lI_jLqh8TUP_25wgpoU3zDKHQIV4UvigVRByhiX7ON42K9LjR8avS7Ieub8vEqeEvNWDeaQ"/>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-lg text-body-md text-on-surface">Ocean Fire Grill</h3>
+<p class="text-label-sm text-on-surface-variant mb-2">부산</p>
+<div class="flex gap-1">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary/20"></div>
+<div class="w-3 h-3 rounded-full bg-primary/20"></div>
+</div>
+</div>
+<div class="text-right pr-4">
+<div class="font-headline-xl text-body-md font-extrabold text-on-surface">96.2</div>
+<button class="neumorph-sunken p-2 rounded-full text-primary mt-2">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Rank 3 -->
+<div class="neumorph-extruded rounded-lg p-margin-sm flex gap-6 bg-background items-center transition-soft hover:scale-[1.01]">
+<div class="font-headline-xl text-headline-lg text-primary/30 w-12 text-center">#3</div>
+<div class="w-24 h-24 rounded-lg overflow-hidden neumorph-sunken flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Traditional Korean Chinese restaurant interior view with a focus on a steaming bowl of spicy noodles." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANS6FcCc7P5ZHIx5J3W6LHOexnrJc2Tw2QI8vfzwQnxpOvTsq1Vml_aoGzfZVOlDIN0lxRJ4DGvNm9x_OnUUK5lA-YVkCvjIA2G4DM1l-GCjY5cf7yILprjxf2Efp_fxIFUN1yii1x7-DnzwGCYg_-TYomPk5I_y-QM-PjBUsDLSu6O7n-oMvcQGXg9w7UkEiwEgduJ-VqwjIYC97b7O0kbKilTUmcx95vJiDnF5gQx4_8uQARaBLdssWJr4twaVlUaeqNWFOvRA"/>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-lg text-body-md text-on-surface">Grandmaster Han's</h3>
+<p class="text-label-sm text-on-surface-variant mb-2">대구</p>
+<div class="flex gap-1">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary/20"></div>
+</div>
+</div>
+<div class="text-right pr-4">
+<div class="font-headline-xl text-body-md font-extrabold text-on-surface">95.8</div>
+<button class="neumorph-sunken p-2 rounded-full text-primary mt-2">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Repeatable Mini-Cards -->
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Rank 4 -->
+<div class="neumorph-extruded rounded-lg p-6 bg-background">
+<div class="flex justify-between items-start mb-4">
+<span class="font-headline-xl text-body-md text-primary/20">#4</span>
+<span class="font-headline-xl text-body-md text-on-surface">94.1</span>
+</div>
+<h4 class="font-headline-lg text-body-md text-on-surface mb-1">Volcano Noodle Bar</h4>
+<p class="text-label-sm text-on-surface-variant mb-4">제주</p>
+<div class="flex justify-between items-center">
+<span class="flex items-center gap-1 text-secondary text-label-sm"><span class="material-symbols-outlined text-sm">trending_up</span></span>
+<button class="neumorph-extruded px-4 py-2 rounded-full text-primary text-label-sm active:shadow-inner">상세보기</button>
+</div>
+</div>
+<!-- Rank 5 -->
+<div class="neumorph-extruded rounded-lg p-6 bg-background">
+<div class="flex justify-between items-start mb-4">
+<span class="font-headline-xl text-body-md text-primary/20">#5</span>
+<span class="font-headline-xl text-body-md text-on-surface">93.9</span>
+</div>
+<h4 class="font-headline-lg text-body-md text-on-surface mb-1">The Spicy Silk Road</h4>
+<p class="text-label-sm text-on-surface-variant mb-4">인천</p>
+<div class="flex justify-between items-center">
+<span class="flex items-center gap-1 text-on-surface-variant text-label-sm"><span class="material-symbols-outlined text-sm">trending_flat</span></span>
+<button class="neumorph-extruded px-4 py-2 rounded-full text-primary text-label-sm active:shadow-inner">상세보기</button>
+</div>
+</div>
+<!-- Rank 6 -->
+<div class="neumorph-extruded rounded-lg p-6 bg-background">
+<div class="flex justify-between items-start mb-4">
+<span class="font-headline-xl text-body-md text-primary/20">#6</span>
+<span class="font-headline-xl text-body-md text-on-surface">92.5</span>
+</div>
+<h4 class="font-headline-lg text-body-md text-on-surface mb-1">Crimson Kitchen</h4>
+<p class="text-label-sm text-on-surface-variant mb-4">광주</p>
+<div class="flex justify-between items-center">
+<span class="flex items-center gap-1 text-secondary text-label-sm"><span class="material-symbols-outlined text-sm">trending_up</span></span>
+<button class="neumorph-extruded px-4 py-2 rounded-full text-primary text-label-sm active:shadow-inner">상세보기</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Load More -->
+<div class="mt-margin-lg text-center">
+<button class="neumorph-extruded px-16 py-5 rounded-lg font-headline-lg text-body-md text-on-surface-variant hover:text-primary transition-all">
+                11위 - 100위 더보기
+            </button>
+</div>
 </main>
-
-<footer class="bg-inverse-surface border-t-4 border-primary">
-  <div class="flex flex-col md:flex-row justify-between items-center w-full px-4 md:px-margin-desktop py-12 max-w-container-max mx-auto gap-6">
-    <div class="text-center md:text-left">
-      <div class="font-title-md text-title-md font-bold text-white mb-3">짬뽕지도</div>
-      <p class="font-body-sm text-surface-variant uppercase font-label-caps">Analytical flavor discovery engine.</p>
-    </div>
-    <div class="text-surface-variant font-label-caps text-label-caps">© 2024 JJAMPPONG MAP. ALL RIGHTS RESERVED.</div>
-  </div>
+<!-- Footer -->
+<footer class="w-full bg-[#1A1A1A] border-t border-primary/40 pt-10 pb-8 px-margin-lg">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end md:items-center">
+<div class="mb-6 md:mb-0">
+<div class="text-[20px] font-bold text-primary/80 mb-1">짬뽕여지도</div>
+<div class="text-[10px] text-white/30 font-bold tracking-widest">
+                © 2024 JJAMPPONG MAP. ALL RIGHTS RESERVED.
+            </div>
+</div>
+<div class="flex flex-col md:flex-row gap-6 md:gap-10 items-end md:items-center">
+<div class="flex gap-6">
+<a class="text-white/40 text-[12px] hover:text-white transition-colors" href="#">개인정보 처리방침</a>
+<a class="text-white/40 text-[12px] hover:text-white transition-colors" href="#">이용약관</a>
+<a class="text-white/40 text-[12px] hover:text-white transition-colors" href="#">고객센터</a>
+</div>
+<div class="flex gap-2">
+<div class="w-8 h-8 flex items-center justify-center border border-white/10 rounded">
+<span class="material-symbols-outlined text-white/30 text-[18px]">language</span>
+</div>
+<div class="w-8 h-8 flex items-center justify-center border border-white/10 rounded">
+<span class="material-symbols-outlined text-white/30 text-[18px]">restaurant</span>
+</div>
+</div>
+</div>
+</div>
 </footer>
-
-<script type="module" src="/src/api.js"></script>
-<script type="module">
-  const api = window.JjamppongAPI;
-  const list = document.getElementById("restaurant-list");
-  const pagination = document.getElementById("pagination");
-  const regionFilter = document.getElementById("region-filter");
-  const state = { page: Number(new URLSearchParams(location.search).get("page") || 1), regionCode: new URLSearchParams(location.search).get("region_code") || "" };
-
-  function syncUrl() {
-    const params = new URLSearchParams();
-    if (state.regionCode) params.set("region_code", state.regionCode);
-    if (state.page > 1) params.set("page", state.page);
-    history.replaceState(null, "", `${location.pathname}${params.toString() ? `?${params}` : ""}`);
-  }
-
-  function renderRestaurantRow(restaurant, index) {
-    const rank = (state.page - 1) * 20 + index + 1;
-    return `
-      <article class="grid grid-cols-1 md:grid-cols-[80px_1fr_120px_140px_120px_160px] items-center p-4 md:p-6 ${rank === 1 ? "bg-primary-container/5" : ""} hover:bg-surface-container-high transition-colors">
-        <div class="flex md:block items-center justify-between mb-4 md:mb-0">
-          <span class="font-display-lg text-display-lg ${rank === 1 ? "text-primary" : "text-on-background"} leading-none">${rank}</span>
-          ${rank === 1 ? '<span class="md:hidden font-label-caps text-label-caps bg-primary text-on-primary px-2 py-1">TOP PICK</span>' : ""}
-        </div>
-        <div class="flex gap-4 items-center mb-4 md:mb-0">
-          <div class="w-16 h-16 bg-surface-container border-2 border-on-background overflow-hidden flex-shrink-0">
-            <img class="w-full h-full object-cover" src="${api.getPrimaryImage(restaurant)}" alt="${api.escapeHtml(restaurant.name)}" />
-          </div>
-          <div>
-            <h3 class="font-title-md text-title-md text-on-background">${api.escapeHtml(restaurant.name)}</h3>
-            <p class="font-body-sm text-on-surface-variant">${api.escapeHtml(restaurant.address || "주소 미상")} | ${api.soupStyleLabel(restaurant.soup_style)}</p>
-          </div>
-        </div>
-        <div class="text-center font-label-caps text-label-caps text-on-surface-variant mb-4 md:mb-0">${api.escapeHtml(api.regionName(restaurant))}</div>
-        <div class="flex justify-center mb-4 md:mb-0"><div class="flex gap-1">${api.spiceBlocks(restaurant.spice_level)}</div></div>
-        <div class="text-center mb-4 md:mb-0">
-          <span class="font-label-caps text-headline-lg text-on-background">${api.formatScore(restaurant.sentiment_score)}</span>
-        </div>
-        <div class="text-right">
-          <a class="inline-block bg-on-background text-on-primary px-4 py-2 font-label-caps hard-shadow text-xs" href="reviews.html?id=${encodeURIComponent(restaurant.id)}">VIEW DETAILS</a>
-        </div>
-      </article>
-    `;
-  }
-
-  async function loadRegions() {
-    try {
-      const data = await api.getRegions();
-      const regions = api.unwrapResults(data);
-      regionFilter.innerHTML = '<option value="">전국</option>' + regions.map((region) => `<option value="${api.escapeHtml(region.code)}">${api.escapeHtml(region.name)}</option>`).join("");
-      regionFilter.value = state.regionCode;
-    } catch (error) {
-      console.warn(error);
-    }
-  }
-
-  async function loadRestaurants() {
-    list.innerHTML = '<div class="p-8 text-center font-title-md text-on-surface-variant">랭킹 데이터를 불러오는 중입니다.</div>';
-    syncUrl();
-    try {
-      const data = await api.getRestaurants({ page: state.page, region_code: state.regionCode });
-      const restaurants = api.unwrapResults(data);
-      list.innerHTML = restaurants.length
-        ? restaurants.map(renderRestaurantRow).join("")
-        : '<div class="p-8 text-center font-title-md text-on-surface-variant">표시할 식당이 없습니다.</div>';
-      api.renderPagination(pagination, data, state.page, (page) => {
-        state.page = page;
-        loadRestaurants();
-      });
-    } catch (error) {
-      list.innerHTML = `<div class="p-8 text-center font-title-md text-error">${api.escapeHtml(error.message)}</div>`;
-      pagination.innerHTML = "";
-    }
-  }
-
-  regionFilter.addEventListener("change", () => {
-    state.regionCode = regionFilter.value;
-    state.page = 1;
-    loadRestaurants();
-  });
-
-  document.querySelectorAll("#rank-tabs button").forEach((tab) => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll("#rank-tabs button").forEach((button) => {
-        button.classList.remove("bg-primary", "text-on-primary", "active-rank-tab", "border-primary");
-        button.classList.add("text-on-surface-variant");
-      });
-      tab.classList.add("bg-primary", "text-on-primary", "active-rank-tab", "border-primary");
-      tab.classList.remove("text-on-surface-variant");
-    });
-  });
-
-  loadRegions();
-  loadRestaurants();
-</script>
-</body>
-</html>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-sm py-4 bg-background shadow-[0px_-6px_12px_#A3B1C6,0px_6px_12px_#FFFFFF] rounded-t-lg">
+<div class="flex flex-col items-center justify-center bg-background shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-primary rounded-xl p-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span class="font-label-sm text-label-sm">순위</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-3">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-sm text-label-sm">검색</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-3">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-sm text-label-sm">즐겨찾기</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-3">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">내 정보</span>
+</div>
+</nav>
+<script type="module" src="/src/connect-index.js"></script>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                if (button.classList.contains('neumorph-extruded')) {
+                    button.classList.remove('neumorph-extruded');
+                    button.classList.add('neumorph-sunken');
+                }
+            });
+        });
+    </script>
+</body></html>

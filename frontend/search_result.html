@@ -1,192 +1,345 @@
-﻿<!DOCTYPE html>
-<html class="light" lang="ko">
-<head>
-<meta charset="utf-8" />
-<meta content="width=device-width, initial-scale=1.0" name="viewport" />
-<title>짬뽕지도 - 검색 결과</title>
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>짬뽕여지도 | 명품 짬뽕 컬렉션</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .hard-shadow { box-shadow: 4px 4px 0 0 #1a1c1c; }
-  .hard-shadow:active { box-shadow: 0 0 0 0 #1a1c1c; transform: translate(4px, 4px); }
-</style>
-<script>
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          background: "#f9f9f9",
-          surface: "#ffffff",
-          "surface-container": "#eeeeee",
-          "surface-container-high": "#e8e8e8",
-          "surface-variant": "#e2e2e2",
-          "inverse-surface": "#2f3131",
-          "on-background": "#1a1c1c",
-          "on-surface": "#1a1c1c",
-          "on-surface-variant": "#5b403d",
-          primary: "#b7131a",
-          "primary-container": "#db322f",
-          "primary-fixed": "#ffdad6",
-          "on-primary": "#ffffff",
-          outline: "#906f6c",
-          error: "#ba1a1a"
-        },
-        spacing: { "margin-desktop": "48px", "container-max": "1280px", gutter: "16px" },
-        fontFamily: {
-          "display-lg": ["Hanken Grotesk"],
-          "headline-lg": ["Hanken Grotesk"],
-          "title-md": ["Hanken Grotesk"],
-          "label-caps": ["JetBrains Mono"],
-          "body-sm": ["Inter"],
-          "body-lg": ["Inter"]
-        },
-        fontSize: {
-          "display-lg": ["48px", { lineHeight: "56px", fontWeight: "800" }],
-          "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
-          "title-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
-          "label-caps": ["12px", { lineHeight: "16px", fontWeight: "700" }],
-          "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
-          "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }]
+        :root {
+            --primary: #b7131a;
+            --charcoal: #121212;
+            --matte-black: #0a0a0a;
         }
-      }
-    }
-  };
-</script>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .dotted-leader {
+            border-bottom: 1px dotted #ccc;
+            flex-grow: 1;
+            margin: 0 8px;
+            margin-bottom: 5px;
+        }
+        body {
+            background-color: #f8f8f8;
+            color: #1a1a1a;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+        .fiery-gradient {
+            background: linear-gradient(135deg, #b7131a 0%, #8a0e14 100%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#b7131a",
+                        "on-primary": "#ffffff",
+                        "secondary": "#121212",
+                        "surface": "#ffffff",
+                        "background": "#f8f8f8",
+                        "outline": "#e5e7eb",
+                        "charcoal": "#121212",
+                        "matte-black": "#0a0a0a",
+                        "dark-charcoal": "#1f1f1f"
+                    },
+                    "spacing": {
+                        "section-gap": "80px",
+                        "margin-desktop": "64px",
+                        "unit": "8px",
+                        "container-max": "1200px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px"
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg">
-<header class="bg-surface border-b-2 border-on-background sticky top-0 z-50">
-  <div class="flex justify-between items-center w-full px-4 md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
-    <div class="flex items-center gap-8">
-      <a class="font-display-lg text-3xl md:text-display-lg font-black text-primary" href="/">짬뽕지도</a>
-      <nav class="hidden md:flex gap-6">
-        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="/">랭킹</a>
-        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="map.html">지도</a>
-        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="report.html">제보</a>
-      </nav>
-    </div>
-    <div class="flex items-center gap-4">
-      <form class="hidden md:flex items-center bg-surface-container px-3 py-1 border border-outline" data-search-form>
-        <span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
-        <input class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm w-56" name="q" placeholder="지역, 맛집 검색" type="search" />
-      </form>
-      <button class="bg-primary text-on-primary font-title-md text-body-sm px-6 py-2 hard-shadow hover:bg-primary-container transition-colors active:scale-95 duration-100" data-auth-button type="button">로그인</button>
-    </div>
-  </div>
+<body class="selection:bg-primary selection:text-white">
+<!-- Header (Sleek Modern Matte Black) -->
+<header class="bg-matte-black text-white fixed top-0 w-full z-50 shadow-sm">
+<nav class="flex justify-between items-center w-full px-margin-desktop py-3 max-w-container-max mx-auto h-16">
+<!-- Logo -->
+<a class="text-2xl font-bold tracking-tighter text-primary" href="index.html">짬뽕여지도</a>
+<!-- Center Navigation -->
+<div class="hidden md:flex items-center gap-10">
+<a class="text-sm font-semibold hover:text-primary transition-colors text-white" href="index.html">랭킹</a>
+<a class="text-sm font-semibold hover:text-primary transition-colors text-white" href="map.html">지도</a>
+<a class="text-sm font-semibold hover:text-primary transition-colors text-white" href="report.html">제보하기</a>
+</div>
+<!-- Right Search & Login -->
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[18px]">search</span>
+<input class="bg-dark-charcoal border-none rounded-sm py-2 pl-10 pr-4 text-xs focus:ring-1 focus:ring-primary w-72 text-white placeholder-gray-500 transition-all" placeholder="검색..." type="text"/>
+</div>
+<button class="text-xs font-semibold px-4 py-1.5 border border-white/80 hover:bg-white hover:text-matte-black transition-all rounded-sm">로그인</button>
+</div>
+</nav>
 </header>
-
-<main class="flex-grow w-full max-w-container-max mx-auto px-4 md:px-margin-desktop py-8">
-  <section class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-    <div>
-      <p class="font-label-caps text-label-caps text-primary mb-2">SEARCH RESULT</p>
-      <h1 class="font-headline-lg text-headline-lg">검색 결과 <span class="text-primary" id="result-count">0</span>건</h1>
-      <p class="text-body-sm text-on-surface-variant mt-2"><span id="keyword-label">검색어</span>에 대한 식당 데이터를 API에서 불러옵니다.</p>
-    </div>
-    <form class="w-full md:w-auto flex border-2 border-on-background bg-white" data-search-form>
-      <input class="w-full md:w-80 border-0 focus:ring-0 px-4 py-3" name="q" placeholder="다시 검색" type="search" />
-      <button class="bg-on-background text-white px-5 font-label-caps" type="submit">검색</button>
-    </form>
-  </section>
-
-  <section class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-gutter min-h-[260px]" id="search-results">
-    <div class="col-span-full border-2 border-on-background bg-surface p-8 text-center font-title-md text-on-surface-variant">검색 결과를 불러오는 중입니다.</div>
-  </section>
-
-  <div class="mt-12 flex justify-center gap-2" id="pagination"></div>
+<main class="pt-24 min-h-screen">
+<!-- Hero Section -->
+<section class="px-margin-desktop max-w-container-max mx-auto py-16">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-4 border-charcoal pb-8">
+<div>
+<div class="text-primary font-bold tracking-widest uppercase text-xs mb-2">Nocturne Gastronomy</div>
+<h1 class="text-6xl md:text-7xl font-extrabold tracking-tight text-charcoal">명품 짬뽕 컬렉션</h1>
+</div>
+<p class="text-lg text-gray-600 max-w-md leading-relaxed font-medium">
+                엄선된 장인의 맛을 경험하십시오. AI 정밀 분석과 셰프들의 검증을 거친 국내 최고의 짬뽕 성지들입니다.
+            </p>
+</div>
+</section>
+<!-- Main Content Area -->
+<div class="px-margin-desktop max-w-container-max mx-auto flex flex-col md:flex-row gap-gutter pb-section-gap">
+<!-- Sidebar Filter -->
+<aside class="w-full md:w-72 shrink-0">
+<div class="sticky top-32 space-y-8 bg-white p-8 border-t-4 border-primary shadow-xl">
+<div>
+<h3 class="text-lg font-extrabold text-charcoal mb-8 border-b border-gray-100 pb-2">상세 필터</h3>
+<!-- Region -->
+<div class="mb-8">
+<label class="block text-[11px] font-bold text-gray-400 uppercase mb-3 tracking-widest">지역 선택</label>
+<select class="w-full bg-gray-50 border border-gray-200 rounded-none py-3 px-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary appearance-none font-bold">
+<option>서울 강남구</option>
+<option>부산 해운대구</option>
+<option>인천 송도</option>
+<option>대구 수성구</option>
+</select>
+</div>
+<!-- Culinary Style -->
+<div class="mb-8">
+<label class="block text-[11px] font-bold text-gray-400 uppercase mb-3 tracking-widest">짬뽕 스타일</label>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox border-gray-300 text-primary focus:ring-0 rounded-none" type="checkbox"/>
+<span class="text-sm font-bold text-charcoal group-hover:text-primary transition-colors">정통 해물</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox border-gray-300 text-primary focus:ring-0 rounded-none" type="checkbox"/>
+<span class="text-sm font-bold text-charcoal group-hover:text-primary transition-colors">진한 고기</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox border-gray-300 text-primary focus:ring-0 rounded-none" type="checkbox"/>
+<span class="text-sm font-bold text-charcoal group-hover:text-primary transition-colors">백짬뽕 / 트러플</span>
+</label>
+</div>
+</div>
+<!-- Spiciness -->
+<div class="mb-8">
+<div class="flex justify-between items-center mb-3">
+<label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">맵기 강도</label>
+<span class="material-symbols-outlined text-primary text-[20px]">local_fire_department</span>
+</div>
+<input class="w-full h-1 bg-gray-200 appearance-none cursor-pointer accent-primary" max="5" min="1" step="1" type="range"/>
+<div class="flex justify-between mt-2 text-[10px] font-bold text-gray-400">
+<span>순한맛</span>
+<span>강한맛</span>
+</div>
+</div>
+<!-- Price Range -->
+<div>
+<label class="block text-[11px] font-bold text-gray-400 uppercase mb-3 tracking-widest">가격대</label>
+<div class="grid grid-cols-2 gap-2">
+<button class="border border-gray-200 py-2 text-[11px] font-bold hover:border-primary hover:text-primary transition-all">일반형</button>
+<button class="border-2 border-primary py-2 text-[11px] font-bold text-primary bg-primary/5">프리미엄</button>
+</div>
+</div>
+</div>
+<button class="w-full fiery-gradient text-white text-[12px] font-black py-4 tracking-widest hover:brightness-110 transition-all shadow-lg">검색 결과 반영</button>
+</div>
+</aside>
+<!-- Results Grid -->
+<div class="flex-grow">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Card 1 -->
+<article class="bg-white border border-outline group hover:shadow-2xl transition-all duration-500 overflow-hidden">
+<div class="relative overflow-hidden h-64">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrDHx-RoAkbNBYnqSfaWZjQ32Etqh7LRGOcjb-UBFzH_KyowKkPVz26h5CcQeSbr1tIPuY2Jl80KMbllXIqhNY2KyoecZEvOYxykbClbKH-yGhlJPbXUL7wPIMa-xvIUIZAT46cJOmA_zLMiF2snAmm63ahiXjzKYp1FGJUBPk0_2PiKEN4gyLeZ8N-VLpIHybPohw6D5Sbx5cceXtR7GEWBBtizNo8lqFqZUzMaUQnBoFhRM6n9Fn3zT8w817Wbt-wU-00v24Mg"/>
+<div class="absolute top-0 left-0 bg-primary text-white px-3 py-1 font-black text-xs">
+                            BEST
+                        </div>
+<div class="absolute bottom-4 right-4 bg-charcoal/90 text-white px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold">4.9</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h2 class="text-xl font-extrabold text-charcoal">진흥관 을지로본점</h2>
+<span class="text-primary font-black">₩42,000</span>
+</div>
+<p class="text-gray-500 text-sm font-medium italic mb-6">부드러운 전복 베이스와 세 번 거른 훈연 고춧가루의 깊은 풍미.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 font-bold text-[10px] border border-gray-200">AI 신뢰도 98%</span>
+<span class="px-2 py-1 bg-primary text-white font-bold text-[10px]">셰프 추천</span>
+</div>
+<div class="flex items-center">
+<span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">등급</span>
+<div class="dotted-leader"></div>
+<span class="text-[10px] font-black text-primary">깊은 국물</span>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-white border border-outline group hover:shadow-2xl transition-all duration-500 overflow-hidden">
+<div class="relative overflow-hidden h-64">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3e8Ro4i91ilXbU2P5RsgNkrItwBKkDUVEzsIMotlr8GRrkIeab-lEaxysRbSrQPE5Jdx95qEYwmwosvvHtlxNdQNKqhoRWmPtkUHS7hVehWlKmiBsvngfsfAjDv_iG2Qn2ZE_1w5Q2342-dxFI4Fue1W3n9kKZ8cxF1OstSABE15heHlW-J723Hd4_dwwxGfC0MsKDU_2WHiAs_4VUDxmthXKUd8y01JgCPO8AJriaAUwvfk59Mi-pZmBeW4iqVKHp4zcaGSORA"/>
+<div class="absolute bottom-4 right-4 bg-charcoal/90 text-white px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold">4.7</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h2 class="text-xl font-extrabold text-charcoal">강릉집 중구점</h2>
+<span class="text-primary font-black">₩55,000</span>
+</div>
+<p class="text-gray-500 text-sm font-medium italic mb-6">48시간 우려낸 진한 사골 육수와 화이트 트러플의 고급스러운 조화.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 font-bold text-[10px] border border-gray-200">계절 한정</span>
+</div>
+<div class="flex items-center">
+<span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">기법</span>
+<div class="dotted-leader"></div>
+<span class="text-[10px] font-black text-primary">수비드 조리</span>
+</div>
+</div>
+</article>
+<!-- Banner Section -->
+<div class="col-span-1 md:col-span-2 my-12 relative h-96 group overflow-hidden border-4 border-charcoal">
+<div class="absolute inset-0 z-0">
+<div class="bg-cover bg-center w-full h-full scale-105 group-hover:scale-100 transition-transform duration-1000" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCmTHLnjCtzMwR156iHhlO-BN2xe7BmuD0P-e7Ci28eXj2GYw2ho3Ah9ZU0p22sEH0M4JwMkNz12btnDtSoDmJON5IlUs9fxf562X13H9CpbVAEH6WDvukh3xwiu5aYzg4oTBJrDznhWzfDprNGhuOSytJ6mZqaJne5_x5qnfoXn8o0P-xAjqp74u0Tcjk4mYt7_1VM04hFOxSXoJmGXQvYn5KmHyN8eyJd1Ucqyq6ZRZIidssEqH9XXple3cWel0eOkN_5wrrFzA')"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/60 to-transparent"></div>
+</div>
+<div class="relative z-10 h-full flex flex-col justify-center p-12 max-w-xl text-white">
+<div class="inline-flex items-center gap-2 bg-primary text-white px-3 py-1 font-black text-[10px] w-fit mb-6 tracking-widest">
+                            AI 프리미엄 추천
+                        </div>
+<h3 class="text-5xl font-black mb-4 tracking-tighter">짬뽕의 예술</h3>
+<p class="text-lg text-gray-300 mb-8 leading-relaxed font-medium">마스터 셰프가 선보이는 특별한 미식 경험. 30년 숙성 고춧가루와 심해 랍스터의 완벽한 오케스트라.</p>
+<button class="fiery-gradient text-white text-xs font-black px-10 py-4 hover:brightness-110 transition-all w-fit shadow-xl tracking-widest uppercase">맛집 제보하기</button>
+</div>
+</div>
+<!-- Card 3 -->
+<article class="bg-white border border-outline group hover:shadow-2xl transition-all duration-500 overflow-hidden">
+<div class="relative overflow-hidden h-64">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBE5VOzSzWMcBCd-OvyZHEeRfo4-IbhhJHw-OFpa6-zDVmRPUCMdXWWBOsRYeKwrC1lSx6HUL8ZG8Re7zC9RpIH9fpOuZCFWALLL-EfLOJwHvTAwE98Nd4Mn4g5NwY4OH1WmxfnhnlQR4IpDJGayZCyyRr5QLThrxnQ8rN_CeC9I0eG7JrEgq-fBUsDGdzaXMWSBLxAJSCitVT7pdhwJVAoNKrv8RM8VPlvVQiI7N-nH818LpgaKlRuJNwl4gehkYSjOvpSr0BT9A"/>
+<div class="absolute bottom-4 right-4 bg-charcoal/90 text-white px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold">4.8</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h2 class="text-xl font-extrabold text-charcoal">북경관 본점</h2>
+<span class="text-primary font-black">₩38,000</span>
+</div>
+<p class="text-gray-500 text-sm font-medium italic mb-6">직화로 구워낸 갑오징어와 강렬한 불향이 살아있는 정통파 국물.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 font-bold text-[10px] border border-gray-200">감칠맛 96%</span>
+</div>
+<div class="flex items-center">
+<span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">강도</span>
+<div class="dotted-leader"></div>
+<span class="text-[10px] font-black text-primary">불향 가득</span>
+</div>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="bg-white border border-outline group hover:shadow-2xl transition-all duration-500 overflow-hidden">
+<div class="relative overflow-hidden h-64">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJdmYMcZLMs5xFu4Bv161WD8BMahOsMNLrNnb7bzNFlgcMtSxkRl_Ce0ybeCJUYF11FzQeZQsxPXVQJaSl8aaSanedBrLMS4H9A44fYSq6-ky0Dnwm1vXw0Ct6W3XMEvzL7LKBYERcnnUWZ4UtOwK9NJgYZvEz2KOB6JwLsuYdOG5HOl6nXU8Bn2WN8nuBM09vHV6ujcMq9rCtO1ZP_hb5QBQabWiwpKwDTNMrOq6zdigXmynaHnGrAP4H4sCFEbONW7Nq-u6ynA"/>
+<div class="absolute bottom-4 right-4 bg-charcoal/90 text-white px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold">4.9</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h2 class="text-xl font-extrabold text-charcoal">백해짬뽕 연구소</h2>
+<span class="text-primary font-black">₩48,000</span>
+</div>
+<p class="text-gray-500 text-sm font-medium italic mb-6">시금치로 빚은 건강 면발과 7가지 조개류로 뽑아낸 시원한 육수.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 font-bold text-[10px] border border-gray-200">AI 검증완료</span>
+</div>
+<div class="flex items-center">
+<span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">식감</span>
+<div class="dotted-leader"></div>
+<span class="text-[10px] font-black text-primary">쫄깃한 면발</span>
+</div>
+</div>
+</article>
+</div>
+<!-- Pagination -->
+<div class="mt-section-gap flex justify-center items-center gap-4">
+<button class="w-12 h-12 flex items-center justify-center border border-gray-200 hover:border-primary text-charcoal transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<span class="text-sm font-black text-primary border-b-2 border-primary px-2">01</span>
+<button class="text-sm font-bold text-gray-400 hover:text-charcoal transition-all px-2">02</button>
+<button class="text-sm font-bold text-gray-400 hover:text-charcoal transition-all px-2">03</button>
+<span class="text-gray-300">...</span>
+<button class="w-12 h-12 flex items-center justify-center border border-gray-200 hover:border-primary text-charcoal transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
 </main>
-
-<footer class="bg-inverse-surface border-t-4 border-primary">
-  <div class="flex flex-col md:flex-row justify-between items-center w-full px-4 md:px-margin-desktop py-12 max-w-container-max mx-auto gap-6">
-    <div>
-      <h3 class="font-title-md text-title-md font-bold text-white mb-4">짬뽕지도</h3>
-      <p class="font-body-sm text-body-sm text-surface-variant max-w-sm">© 2024 JJAMPPONG MAP. ALL RIGHTS RESERVED.</p>
-    </div>
-    <div class="flex gap-8">
-      <a class="font-label-caps text-label-caps text-surface-variant hover:text-primary-fixed transition-colors" href="/">랭킹</a>
-      <a class="font-label-caps text-label-caps text-surface-variant hover:text-primary-fixed transition-colors" href="map.html">지도</a>
-      <a class="font-label-caps text-label-caps text-surface-variant hover:text-primary-fixed transition-colors" href="report.html">제보</a>
-    </div>
-  </div>
+<!-- Footer (Minimalist Charcoal Black) -->
+<footer class="bg-[#0f0f0f] text-white border-t border-primary">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-desktop py-12 max-w-container-max mx-auto gap-8">
+<!-- Logo & Copyright -->
+<div class="flex flex-col items-center md:items-start gap-1">
+<div class="text-xl font-bold text-[#8a0e14] tracking-tighter">짬뽕여지도</div>
+<p class="text-[10px] text-gray-500 font-medium tracking-wide">© 2024 JJAMPPONG MAP. ALL RIGHTS RESERVED.</p>
+</div>
+<!-- Legal & Support Links -->
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-[11px] font-medium text-gray-500 hover:text-white transition-colors" href="#">개인정보 처리방침</a>
+<a class="text-[11px] font-medium text-gray-500 hover:text-white transition-colors" href="#">이용약관</a>
+<a class="text-[11px] font-medium text-gray-500 hover:text-white transition-colors" href="#">고객센터</a>
+</div>
+<!-- Social Icons -->
+<div class="flex gap-2">
+<div class="w-8 h-8 border border-gray-800 flex items-center justify-center text-gray-500 hover:text-primary hover:border-gray-600 transition-all cursor-pointer rounded-sm">
+<span class="material-symbols-outlined text-[18px]">public</span>
+</div>
+<div class="w-8 h-8 border border-gray-800 flex items-center justify-center text-gray-500 hover:text-primary hover:border-gray-600 transition-all cursor-pointer rounded-sm">
+<span class="material-symbols-outlined text-[18px]">restaurant</span>
+</div>
+</div>
+</div>
 </footer>
+<script type="module" src="/src/connect-search-result.js"></script>
+<script>
+    // Micro-interactions
+    document.querySelectorAll('article').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-8px)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+        });
+    });
 
-<script type="module" src="/src/api.js"></script>
-<script type="module">
-  const api = window.JjamppongAPI;
-  const params = new URLSearchParams(location.search);
-  const state = { q: params.get("q") || "", page: Number(params.get("page") || 1) };
-  const results = document.getElementById("search-results");
-  const pagination = document.getElementById("pagination");
-  const resultCount = document.getElementById("result-count");
-  const keywordLabel = document.getElementById("keyword-label");
-
-  document.querySelectorAll('[data-search-form] input[name="q"]').forEach((input) => {
-    input.value = state.q;
-  });
-
-  function syncUrl() {
-    const next = new URLSearchParams();
-    if (state.q) next.set("q", state.q);
-    if (state.page > 1) next.set("page", state.page);
-    history.replaceState(null, "", `${location.pathname}${next.toString() ? `?${next}` : ""}`);
-  }
-
-  function renderCard(restaurant) {
-    return `
-      <a class="bg-white border-2 border-on-background hover:-translate-y-1 transition-transform group flex flex-col h-full" href="reviews.html?id=${encodeURIComponent(restaurant.id)}">
-        <div class="relative h-48 overflow-hidden">
-          <img class="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500" src="${api.getPrimaryImage(restaurant)}" alt="${api.escapeHtml(restaurant.name)}" />
-          <div class="absolute bottom-0 right-0 bg-primary text-on-primary px-3 py-1 font-label-caps text-label-caps">AI ${api.formatScore(restaurant.sentiment_score)}점</div>
-        </div>
-        <div class="p-5 flex-grow flex flex-col">
-          <div class="flex justify-between items-start gap-3 mb-2">
-            <h3 class="font-title-md text-title-md group-hover:text-primary transition-colors">${api.escapeHtml(restaurant.name)}</h3>
-            <span class="font-label-caps text-label-caps text-primary shrink-0">${api.escapeHtml(api.regionName(restaurant))}</span>
-          </div>
-          <p class="text-body-sm text-on-surface-variant mb-4 line-clamp-2">${api.escapeHtml(restaurant.address || "주소 미상")}</p>
-          <div class="flex flex-wrap gap-1 mb-4">
-            <span class="text-[10px] font-label-caps text-on-surface-variant px-2 py-0.5 border border-outline">#${api.soupStyleLabel(restaurant.soup_style)}</span>
-            <span class="text-[10px] font-label-caps text-on-surface-variant px-2 py-0.5 border border-outline">#맵기 ${Number(restaurant.spice_level || 0)}</span>
-          </div>
-          <div class="mt-auto pt-4 border-t border-surface-variant flex justify-between items-center">
-            <span class="text-body-sm text-on-surface-variant">${api.formatPrice(restaurant.average_price)}</span>
-            <span class="font-label-caps text-label-caps text-primary">DETAIL</span>
-          </div>
-        </div>
-      </a>
-    `;
-  }
-
-  async function loadSearchResults() {
-    keywordLabel.textContent = state.q ? `"${state.q}"` : "전체";
-    syncUrl();
-    if (!state.q) {
-      results.innerHTML = '<div class="col-span-full border-2 border-on-background bg-surface p-8 text-center font-title-md text-on-surface-variant">검색어를 입력해 주세요.</div>';
-      resultCount.textContent = "0";
-      pagination.innerHTML = "";
-      return;
+    const searchInput = document.querySelector('input[type="text"]');
+    if(searchInput) {
+        searchInput.addEventListener('focus', () => {
+            searchInput.classList.add('w-80');
+            searchInput.classList.add('bg-dark-charcoal/80');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.classList.remove('w-80');
+            searchInput.classList.remove('bg-dark-charcoal/80');
+        });
     }
-
-    results.innerHTML = '<div class="col-span-full border-2 border-on-background bg-surface p-8 text-center font-title-md text-on-surface-variant">검색 결과를 불러오는 중입니다.</div>';
-    try {
-      const data = await api.getRestaurants({ q: state.q, page: state.page });
-      const restaurants = api.unwrapResults(data);
-      resultCount.textContent = data && data.count !== undefined ? Number(data.count).toLocaleString("ko-KR") : restaurants.length.toLocaleString("ko-KR");
-      results.innerHTML = restaurants.length
-        ? restaurants.map(renderCard).join("")
-        : '<div class="col-span-full border-2 border-on-background bg-surface p-8 text-center font-title-md text-on-surface-variant">검색 결과가 없습니다.</div>';
-      api.renderPagination(pagination, data, state.page, (page) => {
-        state.page = page;
-        loadSearchResults();
-      });
-    } catch (error) {
-      results.innerHTML = `<div class="col-span-full border-2 border-on-background bg-surface p-8 text-center font-title-md text-error">${api.escapeHtml(error.message)}</div>`;
-      pagination.innerHTML = "";
-    }
-  }
-
-  loadSearchResults();
 </script>
-</body>
-</html>
+</body></html>

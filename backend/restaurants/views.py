@@ -1,4 +1,4 @@
-from django.db.models import Prefetch, Q
+from django.db.models import F, Prefetch, Q
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -51,6 +51,10 @@ class RestaurantViewSet(viewsets.ReadOnlyModelViewSet):
         if soup_style:
             queryset = queryset.filter(soup_style=soup_style)
 
+        spice_level = params.get("spice_level")
+        if spice_level:
+            queryset = queryset.filter(spice_level=spice_level)
+
         min_spice = params.get("min_spice")
         if min_spice:
             queryset = queryset.filter(spice_level__gte=min_spice)
@@ -59,9 +63,31 @@ class RestaurantViewSet(viewsets.ReadOnlyModelViewSet):
         if max_spice:
             queryset = queryset.filter(spice_level__lte=max_spice)
 
+        min_price = params.get("min_price")
+        if min_price:
+            queryset = queryset.filter(average_price__gte=min_price)
+
+        max_price = params.get("max_price")
+        if max_price:
+            queryset = queryset.filter(average_price__lte=max_price)
+
         youtube_featured = params.get("youtube_featured")
         if youtube_featured in {"true", "1", "yes"}:
             queryset = queryset.filter(youtube_featured=True)
+
+        ordering = params.get("ordering")
+        if ordering:
+            ordering_options = {
+                "score": ("-sentiment_score", "name"),
+                "-score": ("-sentiment_score", "name"),
+                "price": (F("average_price").asc(nulls_last=True), "-sentiment_score", "name"),
+                "-price": (F("average_price").desc(nulls_last=True), "-sentiment_score", "name"),
+                "spice": ("spice_level", "-sentiment_score", "name"),
+                "-spice": ("-spice_level", "-sentiment_score", "name"),
+                "latest": ("-created_at", "name"),
+            }
+            if ordering in ordering_options:
+                queryset = queryset.order_by(*ordering_options[ordering])
 
         return queryset
 

@@ -111,6 +111,24 @@
     return data;
   }
 
+  function sendAnalytics(path, payload) {
+    const headers = new Headers({ "Content-Type": "application/json" });
+    const token = getAccessToken();
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    return fetch(buildUrl(path), {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload || {}),
+      keepalive: true,
+    }).catch((error) => {
+      console.warn("Analytics event failed", error);
+    });
+  }
+
   function getRestaurants(params) {
     return request("/restaurants/", { params });
   }
@@ -125,6 +143,18 @@
 
   function getRegions() {
     return request("/regions/");
+  }
+
+  function favoriteRestaurant(id) {
+    return request(`/restaurants/${encodeURIComponent(id)}/favorite/`, {
+      method: "POST",
+    });
+  }
+
+  function unfavoriteRestaurant(id) {
+    return request(`/restaurants/${encodeURIComponent(id)}/favorite/`, {
+      method: "DELETE",
+    });
   }
 
   function login(credentials) {
@@ -146,6 +176,50 @@
       method: "POST",
       body: payload,
     });
+  }
+
+  function logVisit(payload) {
+    return request("/analytics/visits/", {
+      method: "POST",
+      body: payload,
+    });
+  }
+
+  function logSearch(payload) {
+    return request("/analytics/searches/", {
+      method: "POST",
+      body: payload,
+    });
+  }
+
+  function trackVisit(payload) {
+    return sendAnalytics("/analytics/visits/", payload);
+  }
+
+  function trackSearch(payload) {
+    const data = typeof payload === "string" ? { keyword: payload } : payload || {};
+    if (!data.keyword) {
+      return Promise.resolve();
+    }
+    return sendAnalytics("/analytics/searches/", data);
+  }
+
+  function recordCurrentVisit() {
+    const params = new URLSearchParams(window.location.search);
+    const restaurantId = params.get("id");
+    const payload = {
+      event_type: restaurantId && window.location.pathname.endsWith("reviews.html") ? "detail_view" : "page_view",
+      path: window.location.pathname || "/",
+      full_url: window.location.href,
+      referrer: document.referrer,
+      metadata: { title: document.title },
+    };
+
+    if (restaurantId) {
+      payload.restaurant = restaurantId;
+    }
+
+    return trackVisit(payload);
   }
 
   function unwrapResults(data) {
@@ -476,6 +550,7 @@
         const input = form.querySelector('[name="q"]');
         const keyword = input ? input.value.trim() : "";
         if (keyword) {
+          trackSearch({ keyword, metadata: { path: window.location.pathname || "/" } });
           window.location.href = `/search_result.html?q=${encodeURIComponent(keyword)}`;
         }
       });
@@ -495,6 +570,7 @@
     ensureAuthModal();
     bindAuthButtons();
     bindSearchForms();
+    recordCurrentVisit();
   });
 
   window.JjamppongAPI = {
@@ -506,9 +582,16 @@
     getRestaurantDetail,
     getRestaurantSentiment,
     getRegions,
+    favoriteRestaurant,
+    unfavoriteRestaurant,
     login,
     register,
     submitQuestion,
+    logVisit,
+    logSearch,
+    trackVisit,
+    trackSearch,
+    recordCurrentVisit,
     getAccessToken,
     getRefreshToken,
     setTokens,

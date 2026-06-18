@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="ko">
+<head>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>짬뽕여지도 | Jjamppong Yeojido</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;700&amp;family=JetBrains+Mono:wght@700&amp;family=Playfair+Display:ital,wght@0,700;1,400&amp;family=Nanum+Myeongjo:wght@400;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Use the exact Tailwind Config provided -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#7b5400",
+                    "primary-container": "#b7131a",
+                    "primary": "#8e000d",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f9f9f9",
+                    "data-border": "rgba(144, 111, 108, 0.1)",
+                    "tertiary-fixed": "#ffdead",
+                    "surface-container-low": "#f3f3f3",
+                    "outline": "#906f6c",
+                    "on-secondary-container": "#636564",
+                    "on-tertiary-fixed": "#281900",
+                    "tertiary-fixed-dim": "#f8bc56",
+                    "secondary": "#5d5f5e",
+                    "surface-dim": "#dadada",
+                    "surface-tint": "#bb171c",
+                    "on-primary": "#ffffff",
+                    "data-surface": "#ffffff",
+                    "inverse-on-surface": "#f1f1f1",
+                    "glass-bg": "rgba(255, 255, 255, 0.8)",
+                    "background": "#f9f9f9",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-surface": "#1a1c1c",
+                    "primary-fixed-dim": "#ffb4ac",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#93000d",
+                    "on-secondary-fixed-variant": "#454747",
+                    "secondary-container": "#e2e2e2",
+                    "inverse-primary": "#ffb4ac",
+                    "on-primary-fixed": "#410002",
+                    "inverse-surface": "#2f3131",
+                    "surface-container-high": "#e8e8e8",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "deep-obsidian": "#1a1c1c",
+                    "on-surface-variant": "#5b403d",
+                    "primary-fixed": "#ffdad6",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#c6c6c6",
+                    "surface-variant": "#e2e2e2",
+                    "on-background": "#1a1c1c",
+                    "outline-variant": "#e4beb9",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#5c3e00",
+                    "on-tertiary-container": "#ffcc7a",
+                    "on-secondary": "#ffffff",
+                    "flame-red": "#b7131a",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface": "#f9f9f9",
+                    "surface-container": "#eeeeee",
+                    "on-tertiary-fixed-variant": "#604100",
+                    "scorched-gold": "#9b6b00",
+                    "on-primary-container": "#ffc7c1",
+                    "forest-green": "#1a2e26", 
+                    "cream-beige": "#f5f2eb"   
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "unit": "4px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Hanken Grotesk"],
+                    "label-tiny": ["Inter"],
+                    "title-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "label-caps": ["JetBrains Mono"],
+                    "body-sm": ["Inter"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "serif-premium": ["Nanum Myeongjo", "serif"],
+                    "script-premium": ["Playfair Display", "serif"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "label-tiny": ["10px", {"lineHeight": "12px", "fontWeight": "700"}],
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .classic-texture {
+            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(26, 46, 38, 0.8), rgba(26, 46, 38, 0.4));
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-flame-red/30">
+<!-- TopNavBar: Updated as per request -->
+<nav class="fixed top-0 w-full z-50 bg-[#000000] h-16">
+<div class="flex justify-between items-center h-full px-margin-desktop max-w-container-max mx-auto">
+<a class="text-xl font-bold tracking-tight text-primary" href="index.html">짬뽕여지도</a>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-white hover:text-primary transition-colors" href="index.html">랭킹</a>
+<a class="text-sm font-medium text-white hover:text-primary transition-colors" href="map.html">지도</a>
+<a class="text-sm font-medium text-white hover:text-primary transition-colors" href="report.html">제보하기</a>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-[18px]">search</span>
+<input class="bg-[#242424] border-none rounded-sm py-1.5 pl-9 pr-4 text-sm text-white focus:ring-1 focus:ring-primary w-64 transition-all" placeholder="검색..." type="text"/>
+</div>
+<button class="text-xs font-medium text-white border border-white px-4 py-1.5 hover:bg-white hover:text-black transition-all">로그인</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative h-screen flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0 transition-all duration-1000 opacity-100 translate-y-0">
+<img class="w-full h-full object-cover" data-alt="A macro high-end food photography shot of a steaming bowl of premium seafood Jjamppong. The broth is a deep vibrant red, filled with fresh mussels, squid, and topped with crisp green scallions. The lighting is dramatic and moody, emphasizing textures and steam, shot in a professional culinary studio with a dark forest green background. The overall aesthetic is rich, classic, and sophisticated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCx8R9lUQDcGa1LTsURhUfq7c6C17SbAvFNpdBofmTRZb-hHwQdHbDA_1U1Fslioj6uTzG9d4cuorFkrrxvH7JyQgxAUdqp8mp_uazpDeLtFj2M2gYDmRKNy7N0pLDicV7I_NNcoZQbywgT3Gm5F1IdP5Gsgm3s0z1tESIuY_815AvV-NALhOlVO0DK2qkMHyt1kWNEmpXitKadfyNI_5uDjsv8wy2Ot8mD2GE70VyGWkciSgp8rotFjtk7jlN1O946E2k_cWpW2Q"/>
+<div class="absolute inset-0 hero-gradient"></div>
+</div>
+<div class="relative z-10 text-center text-white max-w-4xl px-margin-mobile transition-all duration-1000 opacity-100 translate-y-0">
+<h2 class="font-script-premium italic text-3xl md:text-5xl text-tertiary-fixed mb-4">The Art of Analytical Fire</h2>
+<h1 class="font-serif-premium font-extrabold text-5xl md:text-8xl leading-tight mb-8">대한민국 최정상의<br/><span class="text-flame-red">짬뽕을 기록하다</span></h1>
+<p class="font-body-lg text-body-lg max-w-2xl mx-auto opacity-90 mb-10">데이터로 검증된 미각의 정점. 짬뽕여지도는 전국 3,000여 곳의 짬뽕집을 정밀 분석하여 당신에게 완벽한 한 그릇을 제안합니다.</p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<button class="bg-flame-red text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-flame-red transition-all duration-500 shadow-2xl">지금 탐험하기</button>
+<button class="border border-white/30 backdrop-blur-md bg-white/10 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all">데이터 리포트 보기</button>
+</div>
+</div>
+<div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer transition-all duration-1000 opacity-100 translate-y-0">
+<span class="material-symbols-outlined text-white text-4xl">keyboard_double_arrow_down</span>
+</div>
+</section>
+<!-- Quick Match: Premium Service Selection -->
+<section class="py-24 bg-cream-beige classic-texture px-margin-desktop">
+<div class="max-container-max mx-auto transition-all duration-1000 opacity-100 translate-y-0">
+<div class="text-center mb-16">
+<span class="font-label-caps text-flame-red uppercase tracking-widest mb-4 block">Personalized Recommendation</span>
+<h2 class="font-serif-premium text-4xl md:text-5xl text-deep-obsidian">당신만을 위한 퀵 매칭 서비스</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Match Card 1 -->
+<div class="group bg-white p-10 rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 border border-outline/5 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-flame-red/5 -mr-8 -mt-8 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+<span class="material-symbols-outlined text-5xl text-flame-red mb-6" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+<h3 class="font-serif-premium text-2xl mb-4">육수 선호도 매칭</h3>
+<p class="font-body-sm text-secondary mb-8 leading-relaxed">고기 베이스의 묵직함 vs 해산물의 시원함. 당신의 취향에 맞는 최고의 육수를 추천합니다.</p>
+<a class="font-label-caps text-flame-red flex items-center gap-2 group-hover:gap-4 transition-all" href="#">START MATCHING <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+</div>
+<!-- Match Card 2 -->
+<div class="group bg-forest-green p-10 rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-white/5 -mr-8 -mt-8 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+<span class="material-symbols-outlined text-5xl text-cream-beige mb-6">local_fire_department</span>
+<h3 class="font-serif-premium text-2xl mb-4 text-cream-beige">맵기 레벨링</h3>
+<p class="font-body-sm text-surface-container-high mb-8 leading-relaxed">스코빌 지수 분석을 통한 정교한 맵기 추천. 당신의 혀가 감당할 수 있는 최적의 화력을 찾으세요.</p>
+<a class="font-label-caps text-cream-beige flex items-center gap-2 group-hover:gap-4 transition-all" href="#">EXPLORE HEAT <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+</div>
+<!-- Match Card 3 -->
+<div class="group bg-white p-10 rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 border border-outline/5 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-flame-red/5 -mr-8 -mt-8 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+<span class="material-symbols-outlined text-5xl text-flame-red mb-6" style="font-variation-settings: 'FILL' 1;">distance</span>
+<h3 class="font-serif-premium text-2xl mb-4">지역 기반 매칭</h3>
+<p class="font-body-sm text-secondary mb-8 leading-relaxed">현재 위치에서 가장 가까운 검증된 명가를 제안합니다. 데이터가 보증하는 실패 없는 선택.</p>
+<a class="font-label-caps text-flame-red flex items-center gap-2 group-hover:gap-4 transition-all" href="#">NEARBY LEGENDS <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+</div>
+</div>
+</div>
+</section>
+<!-- Real-time Popular Top 5: Bento Grid 3x3 Logic -->
+<section class="py-24 bg-white px-margin-desktop overflow-hidden">
+<div class="max-w-container-max mx-auto transition-all duration-1000 opacity-100 translate-y-0">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+<div>
+<span class="font-label-caps text-flame-red uppercase tracking-widest mb-4 block">Real-time Ranking</span>
+<h2 class="font-serif-premium text-4xl md:text-5xl text-deep-obsidian">실시간 인기 짬뽕집 TOP 5</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-12 h-12 rounded-full border border-outline/20 flex items-center justify-center hover:bg-forest-green hover:text-white transition-all"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="w-12 h-12 rounded-full border border-outline/20 flex items-center justify-center hover:bg-forest-green hover:text-white transition-all"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Rank 1: Large Card (Col Span 8) -->
+<div class="md:col-span-8 group relative rounded-2xl overflow-hidden h-[500px] shadow-lg">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" data-alt="An overhead professional top-down culinary shot of a luxurious Jjamppong bowl featuring whole blue crab and jumbo prawns. The scene is elegantly styled with dark rustic wood, a linen napkin, and scattered peppercorns. The lighting is soft and natural from the side, highlighting the glossy red broth and fresh ingredients. Premium, classic aesthetic, high contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaoqcXtW4fsXVdowt96dDtl4QSLhRuOH_IlkR-G4IY4GOJCyBm8nlHTFRpFJsZhd9mRKk8KvlSatacqGq50ZMf6UagrxX_brKnMEAiAPtchgLjdcMzimR9NsjuAPNs-wGk9rbALxetlZU0dpgEuITrvX0wXwyCXzVaz4NNDUtMEdTnnuG-os932aRS1mcBKeAS0MVIb9QMsJNF5T-8wx_2M6CAHKrNZGuDrQCLeM5C_y42PDOxPBm0Iy0ZYi_5OXai-e_jBrBmOw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute top-6 left-6 bg-flame-red text-white px-6 py-2 rounded-full font-serif-premium text-xl">NO. 1</div>
+<div class="absolute bottom-10 left-10 text-white">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-tertiary-fixed text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-sm tracking-widest">CURRENT LEGEND</span>
+</div>
+<h3 class="font-serif-premium text-4xl mb-2">영빈루 (Youngbinru)</h3>
+<p class="font-body-lg opacity-80">경기 평택시 | 전통적인 고기 짬뽕의 정석</p>
+</div>
+</div>
+<!-- Rank 2: Standard Card (Col Span 4) -->
+<div class="md:col-span-4 group relative rounded-2xl overflow-hidden h-[500px] shadow-lg bg-forest-green">
+<div class="h-1/2 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A top-down macro shot of a spicy seafood jjamppong with abundant mussels and chives. Dark background, professional lighting, vibrant reds and greens, minimalist plating style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQBSQcwyMmIU9SHkhR9o6sV2xEbSjhU3jmT_9b__cjXN3vi-IGJJJvD0_929BIO7fk94hdO4Vu_xuQJyIMMlvECS-IBfImugO0Gem7hV8r2ri3xcsNhTeFZTOj48BYZAo8qY60YuC77BCfbzEi6O9DMoNdLgGXWEJU80Hq9tHnEkd8l1N2yAcEhxBK2KoH4TNgzmszRU5h2PucQ4bnZ7z64ZZPorG8E9xBGB2I4adFcEsvtNmA0-4AXTLu9rkEIqkassl59qnTcg"/>
+</div>
+<div class="p-8 text-cream-beige">
+<div class="font-serif-premium text-xl mb-1">NO. 2</div>
+<h3 class="font-serif-premium text-2xl mb-3">복성루 (Bokseongru)</h3>
+<p class="font-body-sm opacity-70 mb-6">전북 군산시 | 산처럼 쌓인 해산물의 위엄</p>
+<div class="flex items-center justify-between border-t border-white/10 pt-4">
+<span class="font-label-caps text-xs">SPICINESS: LEVEL 4</span>
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+</div>
+</div>
+<!-- Rank 3-5: Grid 3 Columns below -->
+<div class="md:col-span-4 bg-cream-beige p-6 rounded-2xl border border-outline/10 flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all">
+<div class="w-24 h-24 rounded-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Small round top-down photo of jjamppong with thick pork slices, vibrant red color, food studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxtnjvmbGv0jEpFgpf1rqRHjZ3seZsjfQWipKCS0tvRcdKdJkQUfCCCAxVkTagpN3x5hiylU82adgVl8dQBdE0AUJWIyRZCOSttMYk8GPmoT4Kp4gZ6-lLcXy8hJTGC1U_PPF2gbduQEO4L9M_H6ib3TwGeSdHujgCt39A1csHchK25jNq869KE6Z3w9YegoH8pFJDNFNmaSGM9Wu6Xm4Z1Bt6uj2DDb5Cq4RR16Up1TMbmZegcCmBtd0RpJxQ6H-L6bO6MrRa7w"/>
+</div>
+<div>
+<div class="font-serif-premium text-lg text-flame-red">NO. 3</div>
+<h4 class="font-serif-premium text-xl">지린성</h4>
+<p class="font-body-sm text-secondary">전북 군산시</p>
+</div>
+</div>
+<div class="md:col-span-4 bg-cream-beige p-6 rounded-2xl border border-outline/10 flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all">
+<div class="w-24 h-24 rounded-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Top down shot of white broth jjamppong with oysters, elegant plating, bright light mode style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBoM0jnKvhNgUUc3G6VSckN7xmjeTnVnprEHLjxB8OVYblhTqAEN29CkuQR0AgUjdI8qeRVQNEEsygGIRWpWjZqrReHD8FgtvZiE0K5b32rp3tU-swCfzgK-M1_S971EFy58uRR8jB9jKyS_Mi8IJ4ILz3Jn63pXMcaAQ6kKLpaOCT8aoU0AH3xodjKopAkdxgPDEdo3OGoLRH5sRcK9TsmLgU_cIzelCWlByNLff9H8SKzZAw_vNLIXejnCAMKM1v7Ynbyv4xRg"/>
+</div>
+<div>
+<div class="font-serif-premium text-lg text-flame-red">NO. 4</div>
+<h4 class="font-serif-premium text-xl">동해원</h4>
+<p class="font-body-sm text-secondary">충남 공주시</p>
+</div>
+</div>
+<div class="md:col-span-4 bg-cream-beige p-6 rounded-2xl border border-outline/10 flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all">
+<div class="w-24 h-24 rounded-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Professional culinary shot of jjamppong with abalone and scallops, dark forest green background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJfIAa40onDkrU6BxXpUFYE1R8sWrMGHwaYOK188PXFKPl-k9kvxLK9rt-8w9ZT4G8bsT9lEU1LsPXdyqScbLOaE44LvASNmkv9VW6wKWTvPUy9GA0PjuM5ohQvaKv9kmFzHaDJmjKDyd5a6DiQs9uVZ-J0YAKnh8oXXxtTFLAJ4hnaQmCnYXRqEgYXDeuAtSci1W54QUdk4gI6OdKRw5phHHwAhbbwdUSI2fJexRGZmMZemDYiEMVQXtsiGQSBjlT1PC1fBZFKg"/>
+</div>
+<div>
+<div class="font-serif-premium text-lg text-flame-red">NO. 5</div>
+<h4 class="font-serif-premium text-xl">교동반점</h4>
+<p class="font-body-sm text-secondary">강원 강릉시</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Data Report: Data Dense Section -->
+<section class="py-24 bg-forest-green relative overflow-hidden">
+<div class="absolute inset-0 opacity-5 transition-all duration-1000 opacity-100 translate-y-0">
+</div>
+<div class="max-w-container-max mx-auto px-margin-desktop relative z-10 transition-all duration-1000 opacity-100 translate-y-0">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<div>
+<span class="font-label-caps text-tertiary-fixed-dim uppercase tracking-widest mb-4 block">Analytical Precision</span>
+<h2 class="font-serif-premium text-4xl md:text-5xl text-white mb-8">AI 데이터 리포트:<br/>짬뽕 트렌드 분석</h2>
+<p class="font-body-lg text-cream-beige/70 mb-10 leading-relaxed">최근 24시간 동안 수집된 15,402개의 리뷰 데이터를 기반으로 도출된 인사이트입니다. 현재 소비자들이 열광하는 짬뽕의 속성을 확인하세요.</p>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-cream-beige font-label-caps text-xs">
+<span class="">BROTH INTENSITY (육수 농도)</span>
+<span class="">88%</span>
+</div>
+<div class="h-2 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-flame-red w-[88%] shadow-[0_0_15px_rgba(183,19,26,0.5)]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-cream-beige font-label-caps text-xs">
+<span class="">SEAFOOD FRESHNESS (해산물 선도)</span>
+<span class="">94%</span>
+</div>
+<div class="h-2 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-scorched-gold w-[94%] shadow-[0_0_15px_rgba(155,107,0,0.5)]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-cream-beige font-label-caps text-xs">
+<span class="">HEAT SATISFACTION (맵기 만족도)</span>
+<span class="">72%</span>
+</div>
+<div class="h-2 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-white w-[72%]"></div>
+</div>
+</div>
+</div>
+<button class="mt-12 group flex items-center gap-4 text-cream-beige font-bold border-b border-cream-beige/30 pb-2 hover:text-flame-red hover:border-flame-red transition-all">
+                        리포트 전문 보기 <span class="material-symbols-outlined group-hover:translate-x-2 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-white/5 backdrop-blur-md p-8 rounded-2xl border border-white/10 text-center">
+<div class="font-label-caps text-tertiary-fixed text-3xl mb-2">1,240+</div>
+<div class="font-body-sm text-cream-beige/60">New Reports Today</div>
+</div>
+<div class="bg-white/5 backdrop-blur-md p-8 rounded-2xl border border-white/10 text-center">
+<div class="font-label-caps text-tertiary-fixed text-3xl mb-2">4.8</div>
+<div class="font-body-sm text-cream-beige/60">Avg. Satisfaction</div>
+</div>
+<div class="col-span-2 bg-white/5 backdrop-blur-md p-8 rounded-2xl border border-white/10">
+<div class="flex items-center justify-between mb-6">
+<span class="font-serif-premium text-xl text-white">지역별 활동량</span>
+<span class="material-symbols-outlined text-white/50">equalizer</span>
+</div>
+<div class="flex items-end gap-2 h-32">
+<div class="flex-1 bg-flame-red/40 hover:bg-flame-red transition-all rounded-t h-[40%]"></div>
+<div class="flex-1 bg-flame-red/40 hover:bg-flame-red transition-all rounded-t h-[60%]"></div>
+<div class="flex-1 bg-flame-red/40 hover:bg-flame-red transition-all rounded-t h-[90%]"></div>
+<div class="flex-1 bg-flame-red/40 hover:bg-flame-red transition-all rounded-t h-[30%]"></div>
+<div class="flex-1 bg-flame-red/40 hover:bg-flame-red transition-all rounded-t h-[75%]"></div>
+<div class="flex-1 bg-flame-red/40 hover:bg-flame-red transition-all rounded-t h-[55%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Regional Map Summary -->
+<section class="py-24 bg-cream-beige classic-texture px-margin-desktop relative">
+<div class="max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center transition-all duration-1000 opacity-100 translate-y-0">
+<div class="lg:col-span-5">
+<span class="font-label-caps text-flame-red uppercase tracking-widest mb-4 block">Interactive Map</span>
+<h2 class="font-serif-premium text-4xl md:text-5xl text-deep-obsidian mb-8">한눈에 보는 짬뽕 전국지도</h2>
+<p class="font-body-lg text-secondary mb-10 leading-relaxed">대한민국 전역의 짬뽕 명가를 인터랙티브 지도로 확인하세요. 지역별 고유의 조리법과 특색을 데이터로 시각화했습니다.</p>
+<ul class="space-y-4 mb-10">
+<li class="flex items-center gap-3 font-body-lg"><span class="material-symbols-outlined text-flame-red" style="font-variation-settings: 'FILL' 1;">check_circle</span> 실시간 위치 기반 서비스</li>
+<li class="flex items-center gap-3 font-body-lg"><span class="material-symbols-outlined text-flame-red" style="font-variation-settings: 'FILL' 1;">check_circle</span> 짬뽕 순례길 코스 가이드</li>
+<li class="flex items-center gap-3 font-body-lg"><span class="material-symbols-outlined text-flame-red" style="font-variation-settings: 'FILL' 1;">check_circle</span> 사용자 기반 상세 필터링</li>
+</ul>
+<button class="bg-deep-obsidian text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-flame-red transition-all shadow-xl">전체 지도 보기</button>
+</div>
+<div class="lg:col-span-7 relative">
+<div class="aspect-square bg-white rounded-3xl shadow-2xl overflow-hidden border border-outline/10 p-4">
+<div class="w-full h-full rounded-2xl overflow-hidden relative grayscale hover:grayscale-0 transition-all duration-700 cursor-crosshair">
+<img class="w-full h-full object-cover opacity-80" data-location="South Korea" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC963ylB20qPby73wwJnthX9MvjjRis0aPjYyQZXkLbgfrrC7tDrWAQ2aEs654SRt_MhDP_meWy0MKiCiVfdVUPUtRcrxLSdKRmdHTLLpBcnoMX9VVwTtknkjXhnontXY9KqmFfKE2JbJ5y0DVtdd5ve35tGl0epf6G8owWdspTRk9MATY9W3kO2Rt5wKF0fd4O5bGVyUnZU-Yh45yn_b3-lvOF5-Z4o4qwl-JRe8XXmQ8ah-GDrWS-dx_G_9ibEK3N-PDG5eO6FQ"/>
+<!-- Floating Map Markers -->
+<div class="absolute top-1/4 left-1/3 group">
+<div class="w-4 h-4 bg-flame-red rounded-full animate-ping absolute"></div>
+<div class="w-4 h-4 bg-flame-red rounded-full relative z-10"></div>
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-glass-bg backdrop-blur-md px-4 py-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+<span class="font-serif-premium text-deep-obsidian">서울: 중화 요리의 격전지</span>
+</div>
+</div>
+<div class="absolute bottom-1/3 right-1/4 group">
+<div class="w-4 h-4 bg-flame-red rounded-full animate-ping absolute"></div>
+<div class="w-4 h-4 bg-flame-red rounded-full relative z-10"></div>
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-glass-bg backdrop-blur-md px-4 py-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+<span class="font-serif-premium text-deep-obsidian">군산: 해산물 짬뽕의 성지</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Premium Floating Info Card -->
+<div class="absolute -bottom-10 -right-10 bg-forest-green p-6 rounded-2xl shadow-2xl text-white max-w-[240px] hidden md:block">
+<div class="font-serif-premium text-3xl mb-1">3,481</div>
+<div class="font-label-caps text-[10px] uppercase tracking-tighter opacity-60">Verified Locations Coast to Coast</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer: Updated as per request -->
+<footer class="bg-[#121212] text-white border-t border-crimson py-12 px-margin-desktop relative">
+<div class="absolute top-0 left-0 w-full h-[1px] bg-[#dc143c]"></div>
+<div class="flex flex-col md:flex-row justify-between items-center w-full max-w-container-max mx-auto gap-8">
+<div class="flex flex-col items-center md:items-start">
+<div class="text-lg font-bold text-primary tracking-tight mb-1">짬뽕여지도</div>
+<p class="text-[10px] text-gray-500 font-bold tracking-widest">© 2024 JJAMPPONG MAP. ALL RIGHTS RESERVED.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-[11px] font-medium text-gray-400 hover:text-white transition-colors" href="#">개인정보 처리방침</a>
+<a class="text-[11px] font-medium text-gray-400 hover:text-white transition-colors" href="#">이용약관</a>
+<a class="text-[11px] font-medium text-gray-400 hover:text-white transition-colors" href="#">고객센터</a>
+</div>
+<div class="flex gap-3">
+<div class="w-8 h-8 border border-gray-700 flex items-center justify-center text-gray-500 hover:text-white transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">public</span>
+</div>
+<div class="w-8 h-8 border border-gray-700 flex items-center justify-center text-gray-500 hover:text-white transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">restaurant</span>
+</div>
+</div>
+</div>
+</footer>
+<!-- FAB: Material Design 3 Pattern -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="bg-flame-red text-white flex items-center justify-center p-4 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 group overflow-hidden">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-12 transition-transform">add</span>
+<span class="max-w-0 group-hover:max-w-xs group-hover:ml-3 overflow-hidden transition-all duration-500 whitespace-nowrap font-bold uppercase tracking-widest text-xs">REPORT NEW SPOT</span>
+</button>
+</div>
+<script type="module" src="/src/connect-main.js"></script>
+<script>
+        // Micro-interactions and simple scroll effects
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                    }
+                });
+            }, observerOptions);
+
+            // Select elements to animate on scroll
+            document.querySelectorAll('section > div').forEach(el => {
+                el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+                observer.observe(el);
+            });
+        });
+    </script>
+
+
+</body></html>
