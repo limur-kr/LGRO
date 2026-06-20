@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LGRO ERD</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    header {
+      padding: 20px 32px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    header h1 { font-size: 1.4rem; font-weight: 700; color: #f1f5f9; }
+    header span {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      background: #334155;
+      padding: 2px 10px;
+      border-radius: 12px;
+    }
+    .legend {
+      display: flex;
+      gap: 20px;
+      padding: 14px 32px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+    .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .diagram-wrap {
+      padding: 32px;
+      overflow: auto;
+    }
+    .mermaid {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 28px;
+      border: 1px solid #334155;
+    }
+    .mermaid svg { max-width: 100%; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>LGRO Database ERD</h1>
+    <span>SQLite → 전환 전 구조 확인</span>
+  </header>
+  <div class="legend">
+    <div class="legend-item"><div class="dot" style="background:#6366f1"></div> accounts</div>
+    <div class="legend-item"><div class="dot" style="background:#10b981"></div> restaurants</div>
+    <div class="legend-item"><div class="dot" style="background:#f59e0b"></div> reviews</div>
+    <div class="legend-item"><div class="dot" style="background:#3b82f6"></div> community</div>
+    <div class="legend-item"><div class="dot" style="background:#ec4899"></div> ai_analysis</div>
+    <div class="legend-item"><div class="dot" style="background:#8b5cf6"></div> analytics</div>
+  </div>
+  <div class="diagram-wrap">
+    <div class="mermaid">
+erDiagram
+    %% ── accounts ──────────────────────────────────────────
+    User {
+        int         id               PK
+        string      username
+        string      email            UK
+        string      display_name
+        string      role             "user | admin"
+        string      profile_image_url
+        string      oauth_provider
+        string      oauth_subject
+        datetime    created_at
+        datetime    updated_at
+    }
+
+    %% ── restaurants ────────────────────────────────────────
+    Region {
+        string  code      PK
+        string  name
+        string  parent_code FK
+        int     ordering
+        bool    is_active
+    }
+
+    JjambbongRestaurant {
+        uuid        id               PK
+        string      region_code      FK
+        string      name
+        text        address
+        string      detail_address
+        decimal     latitude
+        decimal     longitude
+        string      phone
+        text        opening_hours
+        text        description
+        string      soup_style       "MEAT|SEAFOOD|MIXED|UNKNOWN"
+        int         spice_level      "0-5"
+        int         average_price
+        decimal     sentiment_score
+        bool        youtube_featured
+        bool        is_visible
+        datetime    created_at
+        datetime    updated_at
+    }
+
+    RestaurantMenu {
+        int     id          PK
+        uuid    restaurant  FK
+        string  name
+        int     price
+        text    description
+        bool    is_signature
+        int     ordering
+    }
+
+    RestaurantImage {
+        int     id          PK
+        uuid    restaurant  FK
+        string  image
+        string  image_url
+        string  caption
+        bool    is_primary
+        int     ordering
+        datetime created_at
+    }
+
+    UserFavorite {
+        int     id          PK
+        int     user        FK
+        uuid    restaurant  FK
+        datetime created_at
+    }
+
+    %% ── reviews ────────────────────────────────────────────
+    ReviewSource {
+        uuid        id              PK
+        uuid        restaurant      FK
+        string      source_type     "NAVER_BLOG|YOUTUBE|USER"
+        string      title
+        string      url
+        string      author
+        text        content
+        datetime    published_at
+        bool        is_advertorial
+        int         quality_score
+        datetime    collected_at
+    }
+
+    %% ── community ──────────────────────────────────────────
+    Question {
+        uuid        id        PK
+        int         user      FK
+        string      title
+        text        content
+        string      status    "OPEN|ANSWERED|CLOSED"
+        bool        is_public
+        datetime    created_at
+        datetime    updated_at
+    }
+
+    Answer {
+        uuid        id        PK
+        uuid        question  FK
+        int         author    FK
+        text        content
+        datetime    created_at
+        datetime    updated_at
+    }
+
+    %% ── ai_analysis ─────────────────────────────────────────
+    AIAnalysisResult {
+        uuid        id              PK
+        uuid        restaurant      FK
+        string      status          "PENDING|COMPLETED|FAILED"
+        decimal     blog_score
+        decimal     youtube_score
+        decimal     total_score
+        int         review_count
+        text        ai_summary
+        text        error_message
+        bool        is_latest
+        datetime    analyzed_at
+        datetime    created_at
+        datetime    updated_at
+    }
+
+    SentimentAspectScore {
+        int     id          PK
+        uuid    analysis    FK
+        string  aspect      "soup|spiciness|noodle|..."
+        int     score       "0-100"
+        string  summary
+    }
+
+    RestaurantKeyword {
+        int     id          PK
+        uuid    restaurant  FK
+        uuid    analysis    FK
+        string  keyword
+        decimal weight
+        int     frequency
+        string  sentiment
+    }
+
+    WordCloudResult {
+        int     id          PK
+        uuid    restaurant  FK
+        uuid    analysis    FK
+        string  image
+        string  image_url
+        json    keywords
+        datetime generated_at
+    }
+
+    %% ── analytics ───────────────────────────────────────────
+    VisitLog {
+        int     id          PK
+        int     user        FK
+        uuid    restaurant  FK
+        string  event_type  "page_view|detail_view"
+        string  path
+        text    full_url
+        text    referrer
+        text    user_agent
+        string  ip_address
+        string  session_key
+        json    metadata
+        datetime created_at
+    }
+
+    SearchKeyword {
+        int     id                  PK
+        string  keyword
+        string  normalized_keyword  UK
+        int     search_count
+        datetime first_searched_at
+        datetime last_searched_at
+        datetime updated_at
+    }
+
+    SearchLog {
+        int     id                  PK
+        int     user                FK
+        string  keyword
+        string  normalized_keyword
+        int     result_count
+        string  ip_address
+        text    user_agent
+        string  session_key
+        json    metadata
+        datetime created_at
+    }
+
+    %% ── Relations ───────────────────────────────────────────
+    Region                 ||--o{ Region                 : "parent(self)"
+    Region                 ||--o{ JjambbongRestaurant    : "restaurants"
+    JjambbongRestaurant    ||--o{ RestaurantMenu         : "menus"
+    JjambbongRestaurant    ||--o{ RestaurantImage        : "images"
+    JjambbongRestaurant    ||--o{ UserFavorite           : "favorited_by"
+    JjambbongRestaurant    ||--o{ ReviewSource           : "review_sources"
+    JjambbongRestaurant    ||--o{ AIAnalysisResult       : "analysis_results"
+    JjambbongRestaurant    ||--o{ RestaurantKeyword      : "keywords"
+    JjambbongRestaurant    ||--o{ WordCloudResult        : "wordcloud_results"
+    JjambbongRestaurant    ||--o{ VisitLog               : "visit_logs"
+    User                   ||--o{ UserFavorite           : "favorite_restaurants"
+    User                   ||--o{ Question               : "questions"
+    User                   ||--o{ Answer                 : "answers"
+    User                   ||--o{ VisitLog               : "visit_logs"
+    User                   ||--o{ SearchLog              : "search_logs"
+    Question               ||--o{ Answer                 : "answers"
+    AIAnalysisResult       ||--o{ SentimentAspectScore   : "aspect_scores"
+    AIAnalysisResult       ||--o{ RestaurantKeyword      : "keywords"
+    AIAnalysisResult       ||--o{ WordCloudResult        : "wordcloud_results"
+    </div>
+  </div>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      er: { diagramPadding: 30, layoutDirection: 'TB', minEntityWidth: 100, minEntityHeight: 75 },
+      themeVariables: {
+        background: '#1e293b',
+        primaryColor: '#1e293b',
+        primaryTextColor: '#e2e8f0',
+        lineColor: '#64748b',
+        secondaryColor: '#334155',
+        tertiaryColor: '#0f172a',
+        edgeLabelBackground: '#1e293b',
+        attributeBackgroundColorEven: '#0f172a',
+        attributeBackgroundColorOdd: '#1e293b',
+      }
+    })
+  </script>
+</body>
+</html>

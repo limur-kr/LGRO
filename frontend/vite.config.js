@@ -23,13 +23,13 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5173,
       strictPort: false,
-      open: '/index.html',
+      open: '/main.html',
     },
     build: {
       rollupOptions: {
         input: {
-          main: resolve(__dirname, 'index.html'),
-          landing: resolve(__dirname, 'main.html'),
+          index: resolve(__dirname, 'index.html'),
+          main: resolve(__dirname, 'main.html'),
           map: resolve(__dirname, 'map.html'),
           report: resolve(__dirname, 'report.html'),
           reviews: resolve(__dirname, 'reviews.html'),

@@ -50,6 +50,8 @@ QUALITY_RETRY = "retry"
 QUALITY_APPROVE = "approve"
 MIN_STANDARD_REVIEW_COUNT = 5
 MAX_REVISION_COUNT = 2
+MAX_REVIEWS_PER_ANALYSIS = 30  # LLM 프롬프트에 포함할 리뷰 상한
+SOURCE_FETCH_LIMIT = 200       # DB에서 한 번에 가져올 ReviewSource 상한
 
 
 class AnalysisState(TypedDict, total=False):
@@ -96,6 +98,7 @@ class JjambbongAnalysisPipeline:
     def __init__(self, model_name: str | None = None):
         self.model_name = model_name or os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         self._restaurant_cache: dict[str, JjambbongRestaurant] = {}
+        self._model = create_structured_gemini_model(self.model_name)
         self.graph = self.build_graph()
 
     def build_graph(self):
@@ -142,16 +145,10 @@ class JjambbongAnalysisPipeline:
         workflow.add_edge("result_saver", END)
 
         agent_graph = workflow.compile()
-
-        try:
-            with open("agent_graph.png", "wb") as f:
-                f.write(agent_graph.get_graph().draw_mermaid_png())
-        except Exception:
-            pass
-
+        self._write_debug_graph_png(agent_graph)
         return agent_graph
 
-    def write_debug_graph_png(self, agent_graph) -> None:
+    def _write_debug_graph_png(self, agent_graph) -> None:
         should_write = os.getenv("WRITE_LANGGRAPH_PNG", "").lower() in {"1", "true", "yes", "on"}
         try:
             should_write = should_write and settings.DEBUG
@@ -187,9 +184,14 @@ class JjambbongAnalysisPipeline:
 
     def content_validator(self, state: AnalysisState) -> AnalysisState:
         restaurant = self.get_restaurant(state["restaurant_id"])
-        sources = ReviewSource.objects.filter(restaurant=restaurant).order_by("-published_at", "-collected_at")
+        sources = list(
+            ReviewSource.objects.filter(restaurant=restaurant)
+            .order_by("-published_at", "-collected_at")
+            [:SOURCE_FETCH_LIMIT]
+        )
         reviews = []
         raw_texts = []
+        bulk_update_sources = []
 
         for source in sources:
             text = normalize_review_text(source)
@@ -199,7 +201,7 @@ class JjambbongAnalysisPipeline:
             if source.is_advertorial != is_ad or source.quality_score != quality_score:
                 source.is_advertorial = is_ad
                 source.quality_score = quality_score
-                source.save(update_fields=["is_advertorial", "quality_score"])
+                bulk_update_sources.append(source)
 
             if is_ad or quality_score < 30 or len(text) < 20:
                 continue
@@ -216,6 +218,11 @@ class JjambbongAnalysisPipeline:
                     "published_at": source.published_at.isoformat() if source.published_at else None,
                 }
             )
+
+        if bulk_update_sources:
+            ReviewSource.objects.bulk_update(bulk_update_sources, ["is_advertorial", "quality_score"])
+
+        reviews = sorted(reviews, key=lambda r: r["quality_score"], reverse=True)[:MAX_REVIEWS_PER_ANALYSIS]
 
         route, issue_reason = determine_route(reviews, raw_texts)
         return {
@@ -239,23 +246,17 @@ class JjambbongAnalysisPipeline:
     def creative_analyzer(self, state: AnalysisState) -> AnalysisState:
         return self.run_llm_analysis(state, mode=ROUTE_CREATIVE_FALLBACK)
 
-    def llm_analyzer(self, state: AnalysisState) -> AnalysisState:
-        return self.standard_analyzer(state)
-
     def retry_analyzer(self, state: AnalysisState) -> AnalysisState:
         revision_count = state.get("revision_count", 0) + 1
-        retry_state = {
-            **state,
-            "revision_count": revision_count,
-            "feedback_notes": state.get("feedback_notes", ""),
-        }
-        result = self.run_llm_analysis(retry_state, mode=state.get("route", ROUTE_STANDARD))
+        result = self.run_llm_analysis(
+            {**state, "revision_count": revision_count},
+            mode=state.get("route", ROUTE_STANDARD),
+        )
         result["revision_count"] = revision_count
         return result
 
     def run_llm_analysis(self, state: AnalysisState, mode: str) -> AnalysisState:
         restaurant = self.get_restaurant(state["restaurant_id"])
-        structured_model = create_structured_gemini_model(self.model_name)
         prompt = build_analysis_prompt(
             restaurant=restaurant,
             reviews=state.get("reviews", []),
@@ -263,7 +264,7 @@ class JjambbongAnalysisPipeline:
             feedback_notes=state.get("feedback_notes", ""),
             revision_count=state.get("revision_count", 0),
         )
-        response = coerce_response_dict(structured_model.invoke(prompt))
+        response = coerce_response_dict(self._model.invoke(prompt))
 
         aspect_scores = {}
         aspect_summaries = {}
@@ -282,6 +283,7 @@ class JjambbongAnalysisPipeline:
             "keywords": response.get("keywords", []),
             "summary": str(response.get("summary", "")).strip()[:2000],
             "blog_score": blog_score,
+            "revision_count": state.get("revision_count", 0),
         }
 
     def issue_handler(self, state: AnalysisState) -> AnalysisState:
@@ -501,7 +503,7 @@ def build_analysis_prompt(
 ) -> str:
     review_text = "\n\n".join(
         f"[{index}] title={review['title']}\ncontent={review['content'][:1200]}"
-        for index, review in enumerate(reviews[:30], start=1)
+        for index, review in enumerate(reviews[:MAX_REVIEWS_PER_ANALYSIS], start=1)
     )
     aspect_descriptions = "\n".join(f"- {key}: {label}" for key, label in ASPECT_LABELS.items())
     mode_guidance = {

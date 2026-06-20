@@ -1,0 +1,32 @@
+[
+  {
+    "model": "restaurants.region",
+    "pk": "11",
+    "fields": {
+      "name": "서울특별시",
+      "parent": null,
+      "ordering": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "restaurants.region",
+    "pk": "28",
+    "fields": {
+      "name": "인천광역시",
+      "parent": null,
+      "ordering": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "restaurants.region",
+    "pk": "41",
+    "fields": {
+      "name": "경기도",
+      "parent": null,
+      "ordering": 3,
+      "is_active": true
+    }
+  }
+]

@@ -61,29 +61,25 @@
   #map { width: 100%; height: 100%; background: #e8e8e8; }
 </style>
 </head>
-<body class="bg-background text-on-background font-body-lg overflow-hidden">
-<nav class="fixed top-0 left-0 right-0 z-[100] bg-surface border-b-2 border-on-background">
-  <div class="flex justify-between items-center w-full px-4 md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
-    <div class="flex items-center gap-8">
-      <a class="font-display-lg text-3xl md:text-display-lg font-black text-primary leading-none" href="/">짬뽕지도</a>
-      <div class="hidden md:flex gap-6 items-center">
-        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="/">랭킹</a>
-        <a class="font-title-md text-title-md text-primary border-b-4 border-primary pb-1" href="map.html">지도</a>
-        <a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="report.html">제보</a>
-      </div>
-    </div>
-    <div class="flex items-center gap-4">
-      <form class="relative hidden sm:block" data-search-form>
-        <input class="bg-surface-container border-2 border-on-background px-4 py-2 w-64 font-body-sm focus:ring-0 focus:border-primary outline-none" name="q" placeholder="지역 또는 식당 검색" type="search" />
-        <button class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant" type="submit">search</button>
-      </form>
-      <button class="bg-on-background text-surface px-6 py-2 font-title-md font-bold hover:bg-primary transition-colors active:scale-95 duration-100" data-auth-button type="button">로그인</button>
-    </div>
-  </div>
+<body class="bg-background text-on-background font-body-lg overflow-x-hidden">
+<header class="flex w-full sticky top-0 z-50 items-center justify-between gap-6 bg-[#121212] px-4 py-3 shadow-md md:px-8">
+<a class="shrink-0 text-[24px] font-bold tracking-tight text-[#af101a]" href="main.html">짬뽕지도</a>
+<nav class="hidden md:flex items-center gap-10">
+<a class="text-white/80 hover:text-white font-medium transition-colors duration-300 text-[16px] leading-6" href="index.html">랭킹</a>
+<a class="text-white border-b-2 border-[#af101a] pb-1 font-medium transition-colors duration-300 text-[16px] leading-6" href="map.html">지도</a>
+<a class="text-white/80 hover:text-white font-medium transition-colors duration-300 text-[16px] leading-6" href="report.html">제보하기</a>
 </nav>
+<div class="flex items-center gap-6">
+<form class="hidden md:flex w-64 items-center rounded-md border border-white/10 bg-[#242424] px-3 py-1.5" data-search-form>
+<span class="material-symbols-outlined text-[20px] text-white/50">search</span>
+<input class="w-full border-none bg-transparent px-2 text-[14px] text-white placeholder:text-white/30 focus:ring-0" name="q" placeholder="짬뽕 맛집 검색..." type="search" />
+</form>
+<button class="rounded border border-white px-4 py-1.5 text-[16px] font-medium leading-6 text-white transition-all hover:bg-white hover:text-black" data-auth-button type="button">로그인</button>
+</div>
+</header>
 
-<main class="relative h-screen w-full pt-[88px]">
-  <div class="absolute inset-0 z-0 pt-[88px]">
+<main class="relative h-[calc(100vh-64px)] w-full">
+  <div class="absolute inset-0 z-0">
     <div id="map"></div>
     <div class="absolute left-1/2 top-28 z-10 hidden -translate-x-1/2 border-2 border-on-background bg-surface px-5 py-3 font-body-sm hard-shadow" id="map-status"></div>
     <div class="absolute right-6 top-28 flex flex-col gap-2 z-10">
@@ -99,7 +95,7 @@
     </div>
   </div>
 
-  <aside class="absolute top-[88px] left-0 bottom-0 w-full max-w-[420px] z-20 p-6 pointer-events-none">
+  <aside class="absolute top-0 left-0 bottom-0 w-full max-w-[420px] z-20 p-6 pointer-events-none">
     <div class="h-full flex flex-col gap-4 pointer-events-auto">
       <section class="bg-surface/95 backdrop-blur-md border-2 border-on-background p-4 hard-shadow">
         <header class="mb-4 flex justify-between items-center">
@@ -151,6 +147,30 @@
     </div>
   </div>
 </main>
+<footer class="w-full bg-[#1A1A1A] border-t border-[#af101a]/40 px-4 py-8 md:px-16 md:pt-10">
+<div class="mx-auto flex max-w-7xl flex-col items-end justify-between gap-6 md:flex-row md:items-center">
+<div>
+<div class="mb-1 text-[20px] font-bold text-[#af101a]/80">짬뽕지도</div>
+<div class="text-[10px] font-bold tracking-widest text-white/30">© 2024 JJAMPPONG MAP. ALL RIGHTS RESERVED.</div>
+</div>
+<div class="flex flex-col items-end gap-6 md:flex-row md:items-center md:gap-10">
+<div class="flex flex-wrap justify-end gap-6">
+<a class="text-[12px] text-white/40 transition-colors hover:text-white" href="#">개인정보 처리방침</a>
+<a class="text-[12px] text-white/40 transition-colors hover:text-white" href="#">이용약관</a>
+<a class="text-[12px] text-white/40 transition-colors hover:text-white" href="#">고객센터</a>
+</div>
+<div class="flex gap-2">
+<div class="flex h-8 w-8 items-center justify-center rounded border border-white/10">
+<span class="material-symbols-outlined text-[18px] text-white/30">language</span>
+</div>
+<div class="flex h-8 w-8 items-center justify-center rounded border border-white/10">
+<span class="material-symbols-outlined text-[18px] text-white/30">restaurant</span>
+</div>
+</div>
+</div>
+</div>
+</footer>
+
 
 <script type="module" src="/src/api.js"></script>
 <script type="module">
