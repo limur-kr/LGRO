@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600;700&family=Nanum+Myeongjo:wght@400;700;800&family=Playfair+Display:ital,wght@1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -24,5 +25,11 @@
   }
   .card-surface {
     @apply border-2 border-on-background bg-surface-container-lowest;
+  }
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  }
+  .classic-texture {
+    background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
   }
 }
