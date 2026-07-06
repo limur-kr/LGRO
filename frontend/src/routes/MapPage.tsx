@@ -124,9 +124,9 @@ export function MapPage() {
             {kakaoError}
           </div>
         )}
-        <div ref={mapContainerRef} className="h-full w-full bg-surface-container" />
+        <div ref={mapContainerRef} className="isolate h-full w-full bg-surface-container" />
 
-        <div className="absolute bottom-6 right-4 flex flex-col gap-2">
+        <div className="absolute bottom-6 right-4 z-10 flex flex-col gap-2">
           <button
             type="button"
             onClick={zoomIn}
@@ -151,7 +151,7 @@ export function MapPage() {
         </div>
 
         {selected && (
-          <div className="hard-shadow absolute bottom-4 left-1/2 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 border-2 border-on-background bg-surface p-4">
+          <div className="hard-shadow absolute bottom-4 left-1/2 z-10 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 border-2 border-on-background bg-surface p-4">
             <button
               type="button"
               onClick={() => setSelected(null)}
