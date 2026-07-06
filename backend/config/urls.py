@@ -25,7 +25,8 @@ urlpatterns = [
     path("api/auth/", include("accounts.urls")),
     path("api/", include("restaurants.urls")),
     path("api/", include("community.urls")),
-    path("api/", include("analytics.urls")),
+    path("api/analytics/", include("analytics.urls")),
+    path("api/admin/", include("ai_analysis.admin_urls")),
 ]
 
 if settings.DEBUG:

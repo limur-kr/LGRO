@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-on-surface font-body antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-headline;
+  }
+}
+
+@layer components {
+  .hard-shadow {
+    box-shadow: 4px 4px 0 0 theme("colors.on-background");
+  }
+  .hard-shadow-sm {
+    box-shadow: 2px 2px 0 0 theme("colors.on-background");
+  }
+  .card-surface {
+    @apply border-2 border-on-background bg-surface-container-lowest;
+  }
+}

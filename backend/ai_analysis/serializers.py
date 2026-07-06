@@ -42,9 +42,7 @@ class AIAnalysisResultSerializer(serializers.ModelSerializer):
     restaurant_id = serializers.UUIDField(read_only=True)
     scores = serializers.SerializerMethodField()
     aspect_scores = SentimentAspectScoreSerializer(many=True, read_only=True)
-    aspect_details = SentimentAspectScoreSerializer(source="aspect_scores", many=True, read_only=True)
     keywords = RestaurantKeywordSerializer(many=True, read_only=True)
-    ai_one_liner = serializers.CharField(source="ai_summary", read_only=True)
     summary = serializers.CharField(source="ai_summary", read_only=True)
 
     class Meta:
@@ -60,9 +58,7 @@ class AIAnalysisResultSerializer(serializers.ModelSerializer):
             "review_count",
             "scores",
             "aspect_scores",
-            "aspect_details",
             "keywords",
-            "ai_one_liner",
             "summary",
             "error_message",
             "is_latest",

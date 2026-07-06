@@ -8,12 +8,12 @@ from .views import (
 )
 
 urlpatterns = [
-    path("analytics/visits/", VisitLogCreateAPIView.as_view(), name="analytics-visit-create"),
-    path("analytics/searches/", SearchLogCreateAPIView.as_view(), name="analytics-search-create"),
+    path("visits/", VisitLogCreateAPIView.as_view(), name="analytics-visit-create"),
+    path("searches/", SearchLogCreateAPIView.as_view(), name="analytics-search-create"),
     path(
-        "analytics/popular-searches/",
+        "popular-searches/",
         PopularSearchKeywordListAPIView.as_view(),
         name="analytics-popular-searches",
     ),
-    path("analytics/summary/", AnalyticsSummaryAPIView.as_view(), name="analytics-summary"),
+    path("summary/", AnalyticsSummaryAPIView.as_view(), name="analytics-summary"),
 ]
