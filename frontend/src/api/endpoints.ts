@@ -80,6 +80,14 @@ export function register(payload: {
   return apiClient.post<User>("/auth/register/", payload).then((r) => r.data)
 }
 
+export function loginWithGoogle(accessToken: string) {
+  return apiClient.post<AuthTokens>("/auth/google/", { access_token: accessToken }).then((r) => r.data)
+}
+
+export function loginWithKakao(accessToken: string) {
+  return apiClient.post<AuthTokens>("/auth/kakao/", { access_token: accessToken }).then((r) => r.data)
+}
+
 export function getMe() {
   return apiClient.get<User>("/auth/me/").then((r) => r.data)
 }

@@ -16,4 +16,5 @@ dependencies = [
     "psycopg2>=2.9.12",
     "psycopg[binary]>=3.3.4",
     "python-dotenv>=1.2.2",
+    "requests>=2.34.2",
 ]

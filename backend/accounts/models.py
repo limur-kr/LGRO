@@ -25,6 +25,13 @@ class User(AbstractUser):
             models.Index(fields=["email"]),
             models.Index(fields=["role"]),
         ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["oauth_provider", "oauth_subject"],
+                condition=models.Q(oauth_provider__gt=""),
+                name="unique_oauth_identity",
+            ),
+        ]
 
     @property
     def is_service_admin(self) -> bool:
