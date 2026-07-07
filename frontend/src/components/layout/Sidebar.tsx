@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom"
 const navItems = [
   { to: "/ranking", label: "랭킹" },
   { to: "/map", label: "지도" },
+  { to: "/search", label: "검색" },
   { to: "/report", label: "제보하기" },
 ]
 
