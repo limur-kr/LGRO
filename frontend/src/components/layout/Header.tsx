@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useAuthStore } from "../../auth/store"
 import { logSearch } from "../../api/endpoints"
 
-export function Header() {
+export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const navigate = useNavigate()
   const accessToken = useAuthStore((s) => s.accessToken)
   const clearTokens = useAuthStore((s) => s.clearTokens)
@@ -28,20 +28,21 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between gap-6 bg-on-background px-4 py-3 md:px-8">
-      <Link to="/" className="shrink-0 text-2xl font-bold tracking-tight text-primary">
-        짬뽕지도
-      </Link>
-      <nav className="hidden items-center gap-8 md:flex">
-        <Link to="/ranking" className="text-body-lg font-medium text-white/80 hover:text-white">
-          랭킹
+      <div className="flex items-center gap-4">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-1.5 text-white/80 hover:text-white"
+          aria-label="메뉴 열기"
+        >
+          <span className="block h-0.5 w-6 bg-current" />
+          <span className="block h-0.5 w-6 bg-current" />
+          <span className="block h-0.5 w-6 bg-current" />
+        </button>
+        <Link to="/" className="shrink-0 text-2xl font-bold tracking-tight text-primary">
+          짬뽕지도
         </Link>
-        <Link to="/map" className="text-body-lg font-medium text-white/80 hover:text-white">
-          지도
-        </Link>
-        <Link to="/report" className="text-body-lg font-medium text-white/80 hover:text-white">
-          제보하기
-        </Link>
-      </nav>
+      </div>
       <div className="flex items-center gap-4">
         <form onSubmit={handleSearchSubmit} className="hidden w-64 items-center gap-2 border border-white/10 bg-white/10 px-3 py-1.5 md:flex">
           <input

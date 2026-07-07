@@ -40,11 +40,35 @@ declare global {
     refresh_token?: string
   }
 
+  interface KakaoShareLink {
+    mobileWebUrl: string
+    webUrl: string
+  }
+
+  interface KakaoShareFeedContent {
+    title: string
+    description?: string
+    imageUrl?: string
+    link: KakaoShareLink
+  }
+
+  interface KakaoShareButton {
+    title: string
+    link: KakaoShareLink
+  }
+
   interface KakaoNamespace {
     init(jsKey: string): void
     isInitialized(): boolean
     Auth: {
       login(options: { success: (authObj: KakaoAuthObj) => void; fail: (error: unknown) => void }): void
+    }
+    Share: {
+      sendDefault(options: {
+        objectType: "feed"
+        content: KakaoShareFeedContent
+        buttons?: KakaoShareButton[]
+      }): void
     }
   }
 

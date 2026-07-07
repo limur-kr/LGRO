@@ -1,16 +1,21 @@
 from django.db.models import ExpressionWrapper, F, FloatField, Prefetch, Q
 from django.db.models.functions import Power
-from rest_framework import permissions, status, viewsets
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from ai_analysis.models import AIAnalysisResult, WordCloudResult
 from ai_analysis.serializers import AIAnalysisResultSerializer, WordCloudResultSerializer
+from accounts.permissions import IsServiceAdmin
 
 from .models import JjambbongRestaurant, Region, RestaurantImage, UserFavorite
 from .serializers import (
+    PendingRestaurantImageSerializer,
     RegionSerializer,
     RestaurantDetailSerializer,
+    RestaurantImageUploadSerializer,
     RestaurantListSerializer,
     RestaurantMenuSerializer,
 )
@@ -31,7 +36,10 @@ class RestaurantViewSet(viewsets.ReadOnlyModelViewSet):
             .select_related("region")
             .prefetch_related(
                 "menus",
-                Prefetch("images", queryset=RestaurantImage.objects.order_by("-is_primary", "ordering")),
+                Prefetch(
+                    "images",
+                    queryset=RestaurantImage.objects.filter(is_approved=True).order_by("-is_primary", "ordering"),
+                ),
             )
         )
         params = self.request.query_params
@@ -166,5 +174,47 @@ class RestaurantViewSet(viewsets.ReadOnlyModelViewSet):
 
         UserFavorite.objects.filter(user=request.user, restaurant=restaurant).delete()
         return Response({"is_favorite": False}, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["post"],
+        permission_classes=(permissions.IsAuthenticated,),
+        parser_classes=(MultiPartParser, FormParser),
+        url_path="images",
+    )
+    def upload_image(self, request, pk=None):
+        restaurant = self.get_object()
+        serializer = RestaurantImageUploadSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(restaurant=restaurant, uploaded_by=request.user, is_approved=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class RestaurantImageViewSet(mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    serializer_class = PendingRestaurantImageSerializer
+
+    def get_queryset(self):
+        queryset = RestaurantImage.objects.select_related("restaurant", "uploaded_by")
+        if self.action == "list":
+            queryset = queryset.filter(is_approved=False)
+        return queryset.order_by("created_at")
+
+    def get_permissions(self):
+        if self.action in {"list", "approve"}:
+            return [IsServiceAdmin()]
+        return [permissions.IsAuthenticated()]
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+        if instance.uploaded_by_id != user.id and not user.is_service_admin:
+            raise PermissionDenied("본인이 등록한 사진만 삭제할 수 있습니다.")
+        instance.delete()
+
+    @action(detail=True, methods=["post"], permission_classes=(IsServiceAdmin,))
+    def approve(self, request, pk=None):
+        image = self.get_object()
+        image.is_approved = True
+        image.save(update_fields=["is_approved"])
+        return Response(PendingRestaurantImageSerializer(image).data)
 
 # Create your views here.

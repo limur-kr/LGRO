@@ -122,12 +122,21 @@ class RestaurantImage(models.Model):
     caption = models.CharField(max_length=255, blank=True)
     is_primary = models.BooleanField(default=False)
     ordering = models.PositiveSmallIntegerField(default=0)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="uploaded_restaurant_images",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    is_approved = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["ordering", "id"]
         indexes = [
             models.Index(fields=["restaurant", "is_primary"]),
+            models.Index(fields=["restaurant", "is_approved"]),
         ]
 
     def __str__(self) -> str:

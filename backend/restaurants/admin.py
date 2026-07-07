@@ -67,8 +67,8 @@ class RestaurantMenuAdmin(admin.ModelAdmin):
 
 @admin.register(RestaurantImage)
 class RestaurantImageAdmin(admin.ModelAdmin):
-    list_display = ("restaurant", "caption", "is_primary", "ordering", "created_at")
-    list_filter = ("is_primary",)
+    list_display = ("restaurant", "caption", "is_primary", "is_approved", "uploaded_by", "ordering", "created_at")
+    list_filter = ("is_primary", "is_approved")
     search_fields = ("restaurant__name", "caption")
 
 

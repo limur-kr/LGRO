@@ -1,12 +1,14 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { useRestaurant, useSentiment } from "../hooks/useRestaurants"
 import { useFavoriteMutation } from "../hooks/useFavoriteMutation"
+import { useKakaoAuth } from "../hooks/useKakaoAuth"
 import { useRequireAuth } from "../auth/useRequireAuth"
 import { LoadingState, ErrorState } from "../components/LoadingState"
 import { SpiceDots } from "../components/SpiceDots"
 import { formatPrice, formatScore } from "../lib/format"
 import { regionName, resolveImageUrl, soupStyleLabel } from "../lib/restaurant"
+import { PhotoSection } from "../components/restaurant/PhotoSection"
 
 export function ReviewsPage() {
   const { id } = useParams<{ id: string }>()
@@ -14,7 +16,21 @@ export function ReviewsPage() {
   const { data: sentiment } = useSentiment(id)
   const favoriteMutation = useFavoriteMutation(id ?? "")
   const requireAuth = useRequireAuth()
+  const { isLoaded: isKakaoLoaded } = useKakaoAuth()
   const [shareCopied, setShareCopied] = useState(false)
+  const [isShareMenuOpen, setIsShareMenuOpen] = useState(false)
+  const shareMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isShareMenuOpen) return
+    function handleClickOutside(event: MouseEvent) {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(event.target as Node)) {
+        setIsShareMenuOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [isShareMenuOpen])
 
   if (isLoading) return <LoadingState />
   if (isError || !restaurant) return <ErrorState label="식당 정보를 불러오지 못했습니다." />
@@ -24,11 +40,28 @@ export function ReviewsPage() {
     favoriteMutation.mutate(!restaurant!.is_favorite)
   }
 
-  function handleShare() {
+  function handleCopyLink() {
     navigator.clipboard.writeText(window.location.href).then(() => {
       setShareCopied(true)
+      setIsShareMenuOpen(false)
       setTimeout(() => setShareCopied(false), 1200)
     })
+  }
+
+  function handleKakaoShare() {
+    if (!window.Kakao?.isInitialized()) return
+    const link = { mobileWebUrl: window.location.href, webUrl: window.location.href }
+    window.Kakao.Share.sendDefault({
+      objectType: "feed",
+      content: {
+        title: restaurant.name,
+        description: `${regionName(restaurant)} · ${soupStyleLabel(restaurant.soup_style)}`,
+        imageUrl: resolveImageUrl(restaurant.primary_image_url),
+        link,
+      },
+      buttons: [{ title: "맛집 보기", link }],
+    })
+    setIsShareMenuOpen(false)
   }
 
   const images = restaurant.images.length > 0 ? restaurant.images : null
@@ -75,13 +108,34 @@ export function ReviewsPage() {
                   지도
                 </Link>
               )}
-              <button
-                type="button"
-                onClick={handleShare}
-                className="hard-shadow-sm border-2 border-on-background bg-surface px-4 py-2 text-body-sm font-medium"
-              >
-                {shareCopied ? "COPIED" : "공유"}
-              </button>
+              <div className="relative" ref={shareMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsShareMenuOpen((v) => !v)}
+                  className="hard-shadow-sm border-2 border-on-background bg-surface px-4 py-2 text-body-sm font-medium"
+                >
+                  {shareCopied ? "COPIED" : "공유"}
+                </button>
+                {isShareMenuOpen && (
+                  <div className="hard-shadow-sm absolute right-0 top-full z-10 mt-2 w-40 border-2 border-on-background bg-surface">
+                    <button
+                      type="button"
+                      onClick={handleCopyLink}
+                      className="block w-full px-4 py-2 text-left text-body-sm hover:bg-surface-container"
+                    >
+                      링크 복사
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleKakaoShare}
+                      disabled={!isKakaoLoaded}
+                      className="block w-full border-t-2 border-on-background px-4 py-2 text-left text-body-sm hover:bg-surface-container disabled:opacity-60"
+                    >
+                      카카오톡 공유
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -110,6 +164,8 @@ export function ReviewsPage() {
               </ul>
             </div>
           )}
+
+          <PhotoSection restaurant={restaurant} />
         </div>
 
         <div>

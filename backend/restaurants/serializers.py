@@ -22,9 +22,39 @@ class RestaurantMenuSerializer(serializers.ModelSerializer):
 
 
 class RestaurantImageSerializer(serializers.ModelSerializer):
+    is_owner = serializers.SerializerMethodField()
+
     class Meta:
         model = RestaurantImage
-        fields = ("id", "image", "image_url", "caption", "is_primary", "ordering")
+        fields = ("id", "image", "image_url", "caption", "is_primary", "ordering", "is_owner")
+
+    def get_is_owner(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return obj.uploaded_by_id == request.user.id
+
+
+class RestaurantImageUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RestaurantImage
+        fields = ("id", "image", "caption")
+        extra_kwargs = {"image": {"required": True}}
+
+
+class PendingRestaurantImageSerializer(serializers.ModelSerializer):
+    restaurant_id = serializers.PrimaryKeyRelatedField(source="restaurant", read_only=True)
+    restaurant_name = serializers.CharField(source="restaurant.name", read_only=True)
+    uploaded_by = serializers.SerializerMethodField()
+
+    class Meta:
+        model = RestaurantImage
+        fields = ("id", "restaurant_id", "restaurant_name", "image", "caption", "uploaded_by", "created_at")
+
+    def get_uploaded_by(self, obj):
+        if not obj.uploaded_by:
+            return None
+        return obj.uploaded_by.display_name or obj.uploaded_by.username
 
 
 class RestaurantListSerializer(serializers.ModelSerializer):

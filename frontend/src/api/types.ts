@@ -47,6 +47,17 @@ export interface RestaurantImage {
   caption: string
   is_primary: boolean
   ordering: number
+  is_owner: boolean
+}
+
+export interface PendingRestaurantImage {
+  id: number
+  restaurant_id: string
+  restaurant_name: string
+  image: string | null
+  caption: string
+  uploaded_by: string | null
+  created_at: string
 }
 
 export interface RestaurantDetail extends RestaurantListItem {

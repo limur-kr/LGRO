@@ -9,4 +9,5 @@ export const queryKeys = {
   wordcloud: (id: string) => ["restaurant", id, "wordcloud"] as const,
   myQuestions: ["questions", "mine"] as const,
   reportQueue: ["questions", "reports"] as const,
+  pendingRestaurantImages: ["restaurant-images", "pending"] as const,
 }

@@ -5,9 +5,11 @@ import type {
   AuthTokens,
   Job,
   Paginated,
+  PendingRestaurantImage,
   Question,
   Region,
   RestaurantDetail,
+  RestaurantImage,
   RestaurantListItem,
   RestaurantListParams,
   RestaurantMenu,
@@ -66,6 +68,24 @@ export function favoriteRestaurant(id: string) {
 
 export function unfavoriteRestaurant(id: string) {
   return apiClient.delete<{ is_favorite: boolean }>(`/restaurants/${encodeURIComponent(id)}/favorite/`).then((r) => r.data)
+}
+
+export function uploadRestaurantImage(restaurantId: string, formData: FormData) {
+  return apiClient
+    .post<RestaurantImage>(`/restaurants/${encodeURIComponent(restaurantId)}/images/`, formData)
+    .then((r) => r.data)
+}
+
+export function deleteRestaurantImage(imageId: number) {
+  return apiClient.delete(`/restaurant-images/${imageId}/`).then(() => undefined)
+}
+
+export function getPendingRestaurantImages() {
+  return apiClient.get<Paginated<PendingRestaurantImage>>("/restaurant-images/").then((r) => r.data)
+}
+
+export function approveRestaurantImage(imageId: number) {
+  return apiClient.post<PendingRestaurantImage>(`/restaurant-images/${imageId}/approve/`).then((r) => r.data)
 }
 
 export function login(credentials: { username: string; password: string }) {

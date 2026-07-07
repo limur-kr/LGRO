@@ -4,11 +4,12 @@ import { useAuthStore } from "../auth/store"
 import { getMe, collectReviews, runAnalysis } from "../api/endpoints"
 import { useRegions, useRestaurants } from "../hooks/useRestaurants"
 import { useApproveReport, useRejectReport, useReportQueue } from "../hooks/useReports"
+import { useApproveRestaurantImage, useDeleteRestaurantImage, usePendingRestaurantImages } from "../hooks/useRestaurantImages"
 import { useJobPolling } from "../hooks/useJobPolling"
 import { LoadingState } from "../components/LoadingState"
 import { AuthGatePanel } from "../components/AuthGatePanel"
-import { soupStyleLabel } from "../lib/restaurant"
-import type { ApproveReportPayload, Question, SoupStyle } from "../api/types"
+import { resolveImageUrl, soupStyleLabel } from "../lib/restaurant"
+import type { ApproveReportPayload, PendingRestaurantImage, Question, SoupStyle } from "../api/types"
 
 const SOUP_STYLE_OPTIONS: SoupStyle[] = ["MEAT", "SEAFOOD", "MIXED", "UNKNOWN"]
 
@@ -60,6 +61,7 @@ export function AdminPage() {
       <h1 className="mb-8 text-headline-lg font-headline">관리자 대시보드</h1>
 
       <ReportQueueSection />
+      <PhotoQueueSection />
 
       <div className="card-surface hard-shadow-sm mb-8 p-5">
         <p className="mb-3 font-mono text-label-caps text-on-surface-variant">작업 범위</p>
@@ -274,6 +276,64 @@ function ReportRow({
       )}
 
       {expanded && <ApproveForm report={report} onDone={onToggle} />}
+    </div>
+  )
+}
+
+function PhotoQueueSection() {
+  const { data, isLoading } = usePendingRestaurantImages()
+  const images = data?.results ?? []
+
+  return (
+    <div className="card-surface hard-shadow-sm mb-8 p-5">
+      <p className="mb-3 font-mono text-label-caps text-on-surface-variant">사진 등록 승인</p>
+      {isLoading && <p className="text-body-sm text-on-surface-variant">불러오는 중...</p>}
+      {!isLoading && images.length === 0 && (
+        <p className="text-body-sm text-on-surface-variant">대기 중인 사진이 없습니다.</p>
+      )}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {images.map((image) => (
+          <PhotoQueueRow key={image.id} image={image} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function PhotoQueueRow({ image }: { image: PendingRestaurantImage }) {
+  const approveImage = useApproveRestaurantImage()
+  const deleteImage = useDeleteRestaurantImage()
+
+  return (
+    <div className="border-2 border-on-background p-3">
+      <img
+        src={resolveImageUrl(image.image)}
+        alt={image.caption || image.restaurant_name}
+        className="mb-2 h-32 w-full object-cover"
+      />
+      <p className="text-body-sm font-medium">{image.restaurant_name}</p>
+      {image.caption && <p className="text-body-sm text-on-surface-variant">{image.caption}</p>}
+      <p className="mb-3 text-label-caps font-mono text-on-surface-variant">
+        {image.uploaded_by || "익명"}
+      </p>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => approveImage.mutate(image.id)}
+          disabled={approveImage.isPending}
+          className="hard-shadow-sm flex-1 bg-primary px-3 py-2 text-body-sm font-medium text-on-primary disabled:opacity-60"
+        >
+          승인
+        </button>
+        <button
+          type="button"
+          onClick={() => deleteImage.mutate(image.id)}
+          disabled={deleteImage.isPending}
+          className="flex-1 border-2 border-on-background px-3 py-2 text-body-sm font-medium disabled:opacity-60"
+        >
+          반려
+        </button>
+      </div>
     </div>
   )
 }
