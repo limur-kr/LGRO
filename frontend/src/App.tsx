@@ -8,6 +8,7 @@ import { SearchResultPage } from "./routes/SearchResultPage"
 import { ReviewsPage } from "./routes/ReviewsPage"
 import { ReportPage } from "./routes/ReportPage"
 import { AdminPage } from "./routes/AdminPage"
+import { AccountPage } from "./routes/AccountPage"
 
 const MapPage = lazy(() => import("./routes/MapPage").then((m) => ({ default: m.MapPage })))
 
@@ -28,6 +29,7 @@ export default function App() {
           }
         />
         <Route path="/report" element={<ReportPage />} />
+        <Route path="/account" element={<AccountPage />} />
         <Route path="/admin" element={<AdminPage />} />
       </Route>
     </Routes>

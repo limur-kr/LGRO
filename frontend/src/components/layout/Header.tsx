@@ -51,6 +51,11 @@ export function Header() {
             className="w-full border-none bg-transparent text-body-sm text-white placeholder:text-white/40 focus:outline-none"
           />
         </form>
+        {accessToken && (
+          <Link to="/account" className="text-body-sm font-medium text-white/80 hover:text-white">
+            계정
+          </Link>
+        )}
         <button
           type="button"
           onClick={handleAuthClick}

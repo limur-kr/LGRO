@@ -1,7 +1,7 @@
 import logging
 
 import requests
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,12 +16,19 @@ class RegisterAPIView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
 
-class MeAPIView(generics.RetrieveUpdateAPIView):
+class MeAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self):
         return self.request.user
+
+    def perform_destroy(self, instance):
+        if instance.has_usable_password():
+            password = self.request.data.get("password", "")
+            if not instance.check_password(password):
+                raise serializers.ValidationError({"password": "비밀번호가 일치하지 않습니다."})
+        instance.delete()
 
 
 class GoogleLoginAPIView(APIView):

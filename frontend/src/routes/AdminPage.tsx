@@ -6,6 +6,7 @@ import { useRegions, useRestaurants } from "../hooks/useRestaurants"
 import { useApproveReport, useRejectReport, useReportQueue } from "../hooks/useReports"
 import { useJobPolling } from "../hooks/useJobPolling"
 import { LoadingState } from "../components/LoadingState"
+import { AuthGatePanel } from "../components/AuthGatePanel"
 import { soupStyleLabel } from "../lib/restaurant"
 import type { ApproveReportPayload, Question, SoupStyle } from "../api/types"
 
@@ -28,7 +29,7 @@ export function AdminPage() {
 
   if (!accessToken) {
     return (
-      <GatePanel
+      <AuthGatePanel
         message="관리자 로그인이 필요합니다."
         onLoginClick={() => openModal("login", () => adminCheck.refetch())}
       />
@@ -41,7 +42,7 @@ export function AdminPage() {
 
   if (adminCheck.isError) {
     return (
-      <GatePanel
+      <AuthGatePanel
         message="인증 오류가 발생했습니다."
         onLoginClick={() => openModal("login", () => adminCheck.refetch())}
       />
@@ -49,7 +50,7 @@ export function AdminPage() {
   }
 
   if (!adminCheck.data?.is_service_admin) {
-    return <GatePanel message={`'${adminCheck.data?.username}' 계정은 관리자 권한이 없습니다.`} />
+    return <AuthGatePanel message={`'${adminCheck.data?.username}' 계정은 관리자 권한이 없습니다.`} />
   }
 
   const scopedRestaurantId = scope === "single" ? restaurantId || undefined : undefined
@@ -102,20 +103,6 @@ export function AdminPage() {
           trigger={() => runAnalysis(scopedRestaurantId)}
         />
       </div>
-    </div>
-  )
-}
-
-function GatePanel({ message, onLoginClick }: { message: string; onLoginClick?: () => void }) {
-  return (
-    <div className="mx-auto max-w-md px-4 py-24 text-center md:px-8">
-      <h1 className="mb-4 text-headline-lg font-headline">관리자 대시보드</h1>
-      <p className="mb-6 text-body-sm text-on-surface-variant">{message}</p>
-      {onLoginClick && (
-        <button type="button" onClick={onLoginClick} className="hard-shadow bg-primary px-6 py-3 text-title-md text-on-primary">
-          로그인
-        </button>
-      )}
     </div>
   )
 }

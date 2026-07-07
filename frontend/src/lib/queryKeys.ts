@@ -1,6 +1,7 @@
 import type { RestaurantListParams } from "../api/types"
 
 export const queryKeys = {
+  me: ["me"] as const,
   regions: ["regions"] as const,
   restaurants: (params: RestaurantListParams) => ["restaurants", params] as const,
   restaurant: (id: string) => ["restaurant", id] as const,

@@ -113,6 +113,7 @@ export interface User {
   role: string
   profile_image_url: string | null
   is_service_admin: boolean
+  has_usable_password: boolean
 }
 
 export interface Answer {

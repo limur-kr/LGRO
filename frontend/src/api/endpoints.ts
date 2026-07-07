@@ -93,6 +93,10 @@ export function getMe() {
   return apiClient.get<User>("/auth/me/").then((r) => r.data)
 }
 
+export function deleteAccount(password?: string) {
+  return apiClient.delete("/auth/me/", password ? { data: { password } } : undefined).then(() => undefined)
+}
+
 export function getQuestions(params?: { page?: number }) {
   return apiClient.get<Paginated<Question>>("/questions/", { params }).then((r) => r.data)
 }

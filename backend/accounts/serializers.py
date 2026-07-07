@@ -7,6 +7,7 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     is_service_admin = serializers.BooleanField(read_only=True)
+    has_usable_password = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -18,8 +19,12 @@ class UserSerializer(serializers.ModelSerializer):
             "role",
             "profile_image_url",
             "is_service_admin",
+            "has_usable_password",
         )
-        read_only_fields = ("id", "role", "is_service_admin")
+        read_only_fields = ("id", "role", "is_service_admin", "has_usable_password")
+
+    def get_has_usable_password(self, obj):
+        return obj.has_usable_password()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
