@@ -1,4 +1,5 @@
-from django.db.models import F, Prefetch, Q
+from django.db.models import ExpressionWrapper, F, FloatField, Prefetch, Q
+from django.db.models.functions import Power
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -88,6 +89,24 @@ class RestaurantViewSet(viewsets.ReadOnlyModelViewSet):
             }
             if ordering in ordering_options:
                 queryset = queryset.order_by(*ordering_options[ordering])
+        elif params.get("lat") and params.get("lng"):
+            try:
+                lat_value = float(params["lat"])
+                lng_value = float(params["lng"])
+            except ValueError:
+                lat_value = lng_value = None
+
+            if lat_value is not None:
+                queryset = (
+                    queryset.filter(latitude__isnull=False, longitude__isnull=False)
+                    .annotate(
+                        distance_sq=ExpressionWrapper(
+                            Power(F("latitude") - lat_value, 2) + Power(F("longitude") - lng_value, 2),
+                            output_field=FloatField(),
+                        )
+                    )
+                    .order_by("distance_sq")
+                )
 
         return queryset
 

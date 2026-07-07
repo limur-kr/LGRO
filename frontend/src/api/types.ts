@@ -168,6 +168,8 @@ export interface RestaurantListParams {
   max_price?: number
   youtube_featured?: boolean
   ordering?: string
+  lat?: number
+  lng?: number
 }
 
 export interface Job {

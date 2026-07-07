@@ -4,6 +4,8 @@ declare global {
   namespace kakao.maps {
     class LatLng {
       constructor(lat: number, lng: number)
+      getLat(): number
+      getLng(): number
     }
 
     class LatLngBounds {
@@ -16,6 +18,7 @@ declare global {
       getLevel(): number
       setBounds(bounds: LatLngBounds): void
       panTo(latlng: LatLng): void
+      getCenter(): LatLng
     }
 
     class Marker {
@@ -24,7 +27,7 @@ declare global {
     }
 
     const event: {
-      addListener(target: Marker, type: string, handler: () => void): void
+      addListener(target: Marker | Map, type: string, handler: () => void): void
     }
 
     function load(callback: () => void): void

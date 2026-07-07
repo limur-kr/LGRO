@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { useRestaurant, useSentiment } from "../hooks/useRestaurants"
 import { useFavoriteMutation } from "../hooks/useFavoriteMutation"
 import { useRequireAuth } from "../auth/useRequireAuth"
@@ -67,6 +67,14 @@ export function ReviewsPage() {
               >
                 {restaurant.is_favorite ? "찜 완료" : "찜하기"}
               </button>
+              {restaurant.latitude !== null && restaurant.longitude !== null && (
+                <Link
+                  to={`/map?lat=${restaurant.latitude}&lng=${restaurant.longitude}&id=${restaurant.id}`}
+                  className="hard-shadow-sm border-2 border-on-background bg-surface px-4 py-2 text-body-sm font-medium"
+                >
+                  지도
+                </Link>
+              )}
               <button
                 type="button"
                 onClick={handleShare}

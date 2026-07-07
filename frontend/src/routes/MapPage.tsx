@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import { useRestaurants } from "../hooks/useRestaurants"
 import { useKakaoMaps } from "../hooks/useKakaoMaps"
 import { LoadingState, ErrorState } from "../components/LoadingState"
@@ -16,20 +16,45 @@ function hasValidCoordinates(restaurant: RestaurantListItem): boolean {
   )
 }
 
+const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 }
+const CENTER_EPSILON = 1e-6
+
 export function MapPage() {
   const { isLoaded, error: kakaoError } = useKakaoMaps()
-  const { data, isLoading, isError } = useRestaurants({})
+  const [searchParams] = useSearchParams()
+  const focusRestaurantId = searchParams.get("id")
+  const [center, setCenter] = useState(() => {
+    const lat = Number(searchParams.get("lat"))
+    const lng = Number(searchParams.get("lng"))
+    return Number.isFinite(lat) && Number.isFinite(lng) && lat && lng ? { lat, lng } : DEFAULT_CENTER
+  })
+  const { data, isLoading, isError } = useRestaurants({ lat: center.lat, lng: center.lng })
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<kakao.maps.Map | null>(null)
   const markersRef = useRef<kakao.maps.Marker[]>([])
   const [selected, setSelected] = useState<RestaurantListItem | null>(null)
+  const hasAutoSelectedRef = useRef(false)
 
   const restaurantsWithCoords = useMemo(() => (data?.results ?? []).filter(hasValidCoordinates), [data?.results])
 
   useEffect(() => {
     if (!isLoaded || !mapContainerRef.current || mapRef.current) return
-    const center = new window.kakao.maps.LatLng(37.5665, 126.978)
-    mapRef.current = new window.kakao.maps.Map(mapContainerRef.current, { center, level: 6 })
+    const initialCenter = new window.kakao.maps.LatLng(center.lat, center.lng)
+    const map = new window.kakao.maps.Map(mapContainerRef.current, { center: initialCenter, level: focusRestaurantId ? 4 : 6 })
+    mapRef.current = map
+
+    // 지도 이동/줌이 끝날 때마다 현재 중심 좌표를 기준으로 가장 가까운 식당 목록을 다시 불러온다.
+    window.kakao.maps.event.addListener(map, "idle", () => {
+      const next = map.getCenter()
+      const nextLat = next.getLat()
+      const nextLng = next.getLng()
+      setCenter((prev) => {
+        if (Math.abs(prev.lat - nextLat) < CENTER_EPSILON && Math.abs(prev.lng - nextLng) < CENTER_EPSILON) {
+          return prev
+        }
+        return { lat: nextLat, lng: nextLng }
+      })
+    })
   }, [isLoaded])
 
   useEffect(() => {
@@ -39,25 +64,28 @@ export function MapPage() {
     markersRef.current.forEach((marker) => marker.setMap(null))
     markersRef.current = []
 
-    const bounds = new window.kakao.maps.LatLngBounds()
     restaurantsWithCoords.forEach((restaurant) => {
       const position = new window.kakao.maps.LatLng(Number(restaurant.latitude), Number(restaurant.longitude))
       const marker = new window.kakao.maps.Marker({ map, position, title: restaurant.name })
       window.kakao.maps.event.addListener(marker, "click", () => setSelected(restaurant))
       markersRef.current.push(marker)
-      bounds.extend(position)
     })
-
-    if (markersRef.current.length > 0) {
-      map.setBounds(bounds)
-      if (map.getLevel() > 4) map.setLevel(7)
-    }
 
     return () => {
       markersRef.current.forEach((marker) => marker.setMap(null))
       markersRef.current = []
     }
   }, [isLoaded, restaurantsWithCoords])
+
+  // 상세페이지의 "지도" 버튼으로 들어온 경우, 목록이 로드되면 해당 식당을 한 번만 자동으로 선택해준다.
+  useEffect(() => {
+    if (hasAutoSelectedRef.current || !focusRestaurantId || restaurantsWithCoords.length === 0) return
+    const match = restaurantsWithCoords.find((restaurant) => restaurant.id === focusRestaurantId)
+    if (match) {
+      setSelected(match)
+      hasAutoSelectedRef.current = true
+    }
+  }, [focusRestaurantId, restaurantsWithCoords])
 
   function handleListClick(restaurant: RestaurantListItem) {
     setSelected(restaurant)
@@ -87,7 +115,7 @@ export function MapPage() {
       <aside className="order-2 flex flex-col overflow-y-auto border-r-2 border-on-background bg-surface lg:order-1">
         <div className="border-b-2 border-on-background p-4">
           <p className="text-body-sm text-on-surface-variant">
-            현재 지도 식당 {restaurantsWithCoords.length.toLocaleString("ko-KR")}곳
+            지도 중심에서 가까운 식당 {restaurantsWithCoords.length.toLocaleString("ko-KR")}곳
           </p>
         </div>
         {isLoading && <LoadingState />}
