@@ -4,21 +4,14 @@ from io import StringIO
 
 from django.core.management import call_command
 from django.db import close_old_connections
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
+from accounts.permissions import IsServiceAdmin
+
 _jobs: dict[str, dict] = {}
 _jobs_lock = threading.Lock()
-
-
-class IsServiceAdmin(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return bool(
-            request.user
-            and request.user.is_authenticated
-            and request.user.is_service_admin
-        )
 
 
 def _run_job(job_id: str, command: str, cmd_args: list[str]) -> None:

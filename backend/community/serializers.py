@@ -17,6 +17,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 class QuestionSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     answers = AnswerSerializer(many=True, read_only=True)
+    linked_restaurant_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Question
@@ -27,8 +28,24 @@ class QuestionSerializer(serializers.ModelSerializer):
             "content",
             "status",
             "is_public",
+            "restaurant_name",
+            "restaurant_address",
+            "linked_restaurant",
+            "linked_restaurant_name",
             "answers",
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("id", "user", "status", "answers", "created_at", "updated_at")
+        read_only_fields = (
+            "id",
+            "user",
+            "status",
+            "linked_restaurant",
+            "linked_restaurant_name",
+            "answers",
+            "created_at",
+            "updated_at",
+        )
+
+    def get_linked_restaurant_name(self, obj):
+        return obj.linked_restaurant.name if obj.linked_restaurant_id else None

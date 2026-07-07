@@ -1,10 +1,3 @@
-import json
-import os
-from decimal import Decimal
-from urllib.error import URLError
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
-
 from django.contrib import admin
 
 from .models import (
@@ -14,24 +7,7 @@ from .models import (
     RestaurantMenu,
     UserFavorite,
 )
-
-
-def _geocode_address(address: str):
-    rest_api_key = os.getenv("KAKAO_REST_API_KEY", "")
-    if not rest_api_key or not address:
-        return None
-    url = "https://dapi.kakao.com/v2/local/search/address.json?" + urlencode({"query": address})
-    req = Request(url, headers={"Authorization": f"KakaoAK {rest_api_key}"})
-    try:
-        with urlopen(req, timeout=5) as response:
-            data = json.loads(response.read())
-        documents = data.get("documents", [])
-        if not documents:
-            return None
-        doc = documents[0]
-        return Decimal(doc["y"]), Decimal(doc["x"])
-    except (URLError, KeyError, Exception):
-        return None
+from .services import geocode_address as _geocode_address
 
 
 class RestaurantMenuInline(admin.TabularInline):

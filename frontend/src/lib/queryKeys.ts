@@ -7,4 +7,5 @@ export const queryKeys = {
   sentiment: (id: string) => ["restaurant", id, "sentiment"] as const,
   wordcloud: (id: string) => ["restaurant", id, "wordcloud"] as const,
   myQuestions: ["questions", "mine"] as const,
+  reportQueue: ["questions", "reports"] as const,
 }

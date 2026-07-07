@@ -27,18 +27,17 @@ export function ReportPage() {
     const title = String(formData.get("title") ?? "")
     const isPublic = formData.get("is_public") !== null
 
-    const contentParts = [
-      restaurantName ? `식당명: ${restaurantName}` : "",
-      address ? `지역/주소: ${address}` : "",
-      "",
-      content,
-    ].filter((part, index) => part || index === 2)
-
     setIsError(false)
     setMessage("제보를 제출하는 중입니다...")
 
     submitQuestion.mutate(
-      { title, content: contentParts.join("\n"), is_public: isPublic },
+      {
+        title,
+        content,
+        is_public: isPublic,
+        restaurant_name: restaurantName,
+        restaurant_address: address,
+      },
       {
         onSuccess: () => {
           form.reset()

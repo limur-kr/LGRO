@@ -131,9 +131,23 @@ export interface Question {
   content: string
   status: "OPEN" | "ANSWERED" | "CLOSED"
   is_public: boolean
+  restaurant_name: string
+  restaurant_address: string
+  linked_restaurant: string | null
+  linked_restaurant_name: string | null
   answers: Answer[]
   created_at: string
   updated_at: string
+}
+
+export interface ApproveReportPayload {
+  region_code: string
+  name?: string
+  address?: string
+  soup_style?: SoupStyle
+  spice_level?: number
+  average_price?: number
+  description?: string
 }
 
 export interface AuthTokens {

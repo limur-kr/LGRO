@@ -1,10 +1,15 @@
-import { useState } from "react"
+import { useState, type FormEvent } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useAuthStore } from "../auth/store"
 import { getMe, collectReviews, runAnalysis } from "../api/endpoints"
-import { useRestaurants } from "../hooks/useRestaurants"
+import { useRegions, useRestaurants } from "../hooks/useRestaurants"
+import { useApproveReport, useRejectReport, useReportQueue } from "../hooks/useReports"
 import { useJobPolling } from "../hooks/useJobPolling"
 import { LoadingState } from "../components/LoadingState"
+import { soupStyleLabel } from "../lib/restaurant"
+import type { ApproveReportPayload, Question, SoupStyle } from "../api/types"
+
+const SOUP_STYLE_OPTIONS: SoupStyle[] = ["MEAT", "SEAFOOD", "MIXED", "UNKNOWN"]
 
 export function AdminPage() {
   const accessToken = useAuthStore((s) => s.accessToken)
@@ -52,6 +57,8 @@ export function AdminPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 md:px-8">
       <h1 className="mb-8 text-headline-lg font-headline">관리자 대시보드</h1>
+
+      <ReportQueueSection />
 
       <div className="card-surface hard-shadow-sm mb-8 p-5">
         <p className="mb-3 font-mono text-label-caps text-on-surface-variant">작업 범위</p>
@@ -172,5 +179,255 @@ function AdminActionCard({
         </pre>
       )}
     </div>
+  )
+}
+
+function ReportQueueSection() {
+  const { data, isLoading } = useReportQueue()
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const reports = data?.results ?? []
+
+  return (
+    <div className="card-surface hard-shadow-sm mb-8 p-5">
+      <p className="mb-3 font-mono text-label-caps text-on-surface-variant">맛집 제보 승인</p>
+      {isLoading && <p className="text-body-sm text-on-surface-variant">불러오는 중...</p>}
+      {!isLoading && reports.length === 0 && (
+        <p className="text-body-sm text-on-surface-variant">대기 중인 제보가 없습니다.</p>
+      )}
+      <div className="space-y-3">
+        {reports.map((report) => (
+          <ReportRow
+            key={report.id}
+            report={report}
+            expanded={expandedId === report.id}
+            onToggle={() => setExpandedId((id) => (id === report.id ? null : report.id))}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ReportRow({
+  report,
+  expanded,
+  onToggle,
+}: {
+  report: Question
+  expanded: boolean
+  onToggle: () => void
+}) {
+  const [rejecting, setRejecting] = useState(false)
+  const [reason, setReason] = useState("")
+  const rejectReport = useRejectReport()
+
+  function handleReject() {
+    rejectReport.mutate(
+      { id: report.id, reason },
+      {
+        onSuccess: () => {
+          setRejecting(false)
+          setReason("")
+        },
+      }
+    )
+  }
+
+  return (
+    <div className="border-2 border-on-background p-4">
+      <div className="mb-1 flex items-center justify-between gap-3">
+        <h3 className="text-title-sm font-headline">{report.title}</h3>
+        <span className="text-label-caps font-mono text-on-surface-variant">
+          {report.user?.display_name || report.user?.username || "익명"}
+        </span>
+      </div>
+      {(report.restaurant_name || report.restaurant_address) && (
+        <p className="mb-1 text-body-sm">
+          {report.restaurant_name || "(식당명 미기재)"}
+          {report.restaurant_address ? ` · ${report.restaurant_address}` : ""}
+        </p>
+      )}
+      <p className="mb-3 whitespace-pre-wrap text-body-sm text-on-surface-variant">{report.content}</p>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={onToggle}
+          className="hard-shadow-sm bg-primary px-4 py-2 text-body-sm font-medium text-on-primary"
+        >
+          {expanded ? "승인 취소" : "승인"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setRejecting((v) => !v)}
+          className="border-2 border-on-background px-4 py-2 text-body-sm font-medium"
+        >
+          반려
+        </button>
+      </div>
+
+      {rejecting && (
+        <div className="mt-3 space-y-2">
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="반려 사유 (선택)"
+            rows={2}
+            className="w-full border-2 border-on-background bg-surface-container px-3 py-2 text-body-sm"
+          />
+          <button
+            type="button"
+            onClick={handleReject}
+            disabled={rejectReport.isPending}
+            className="hard-shadow-sm bg-error px-4 py-2 text-body-sm font-medium text-on-primary disabled:opacity-60"
+          >
+            {rejectReport.isPending ? "반려 중..." : "반려 확정"}
+          </button>
+        </div>
+      )}
+
+      {expanded && <ApproveForm report={report} onDone={onToggle} />}
+    </div>
+  )
+}
+
+function ApproveForm({ report, onDone }: { report: Question; onDone: () => void }) {
+  const { data: regions } = useRegions()
+  const approveReport = useApproveReport()
+  const [name, setName] = useState(report.restaurant_name)
+  const [address, setAddress] = useState(report.restaurant_address)
+  const [regionCode, setRegionCode] = useState("")
+  const [soupStyle, setSoupStyle] = useState<SoupStyle>("UNKNOWN")
+  const [spiceLevel, setSpiceLevel] = useState(0)
+  const [averagePrice, setAveragePrice] = useState("")
+  const [description, setDescription] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
+
+  const { data: duplicateCheck } = useRestaurants({ q: name || undefined })
+  const duplicates = name ? duplicateCheck?.results ?? [] : []
+
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault()
+    if (!regionCode) {
+      setErrorMessage("지역을 선택해주세요.")
+      return
+    }
+    setErrorMessage("")
+
+    const payload: ApproveReportPayload = {
+      region_code: regionCode,
+      name,
+      address,
+      soup_style: soupStyle,
+      spice_level: spiceLevel,
+      description,
+    }
+    if (averagePrice) {
+      payload.average_price = Number(averagePrice)
+    }
+
+    approveReport.mutate(
+      { id: report.id, payload },
+      {
+        onSuccess: () => onDone(),
+        onError: () => setErrorMessage("승인 처리에 실패했습니다."),
+      }
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-4 space-y-3 border-t-2 border-on-background pt-4">
+      {duplicates.length > 0 && (
+        <p className="border-2 border-tertiary bg-tertiary/10 px-3 py-2 text-body-sm text-tertiary">
+          이미 등록된 식당일 수 있습니다: {duplicates.map((r) => r.name).join(", ")}
+        </p>
+      )}
+      <label className="block">
+        <span className="mb-1 block font-mono text-label-caps text-on-surface-variant">식당명</span>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="w-full border-2 border-on-background bg-surface-container px-3 py-2 text-body-sm"
+        />
+      </label>
+      <label className="block">
+        <span className="mb-1 block font-mono text-label-caps text-on-surface-variant">주소</span>
+        <input
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="w-full border-2 border-on-background bg-surface-container px-3 py-2 text-body-sm"
+        />
+      </label>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <label className="block">
+          <span className="mb-1 block font-mono text-label-caps text-on-surface-variant">지역</span>
+          <select
+            value={regionCode}
+            onChange={(e) => setRegionCode(e.target.value)}
+            className="w-full border-2 border-on-background bg-surface px-3 py-2 text-body-sm"
+          >
+            <option value="">선택하세요</option>
+            {regions?.results.map((region) => (
+              <option key={region.code} value={region.code}>
+                {region.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block font-mono text-label-caps text-on-surface-variant">육수 스타일</span>
+          <select
+            value={soupStyle}
+            onChange={(e) => setSoupStyle(e.target.value as SoupStyle)}
+            className="w-full border-2 border-on-background bg-surface px-3 py-2 text-body-sm"
+          >
+            {SOUP_STYLE_OPTIONS.map((style) => (
+              <option key={style} value={style}>
+                {soupStyleLabel(style)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block font-mono text-label-caps text-on-surface-variant">매운맛(0-5)</span>
+          <input
+            type="number"
+            min={0}
+            max={5}
+            value={spiceLevel}
+            onChange={(e) => setSpiceLevel(Number(e.target.value))}
+            className="w-full border-2 border-on-background bg-surface-container px-3 py-2 text-body-sm"
+          />
+        </label>
+      </div>
+      <label className="block">
+        <span className="mb-1 block font-mono text-label-caps text-on-surface-variant">평균 가격 (선택)</span>
+        <input
+          type="number"
+          min={0}
+          value={averagePrice}
+          onChange={(e) => setAveragePrice(e.target.value)}
+          className="w-full border-2 border-on-background bg-surface-container px-3 py-2 text-body-sm"
+        />
+      </label>
+      <label className="block">
+        <span className="mb-1 block font-mono text-label-caps text-on-surface-variant">설명 (선택)</span>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={2}
+          className="w-full border-2 border-on-background bg-surface-container px-3 py-2 text-body-sm"
+        />
+      </label>
+      {errorMessage && <p className="text-body-sm text-error">{errorMessage}</p>}
+      <button
+        type="submit"
+        disabled={approveReport.isPending}
+        className="hard-shadow-sm w-full bg-primary px-4 py-2 text-body-sm font-medium text-on-primary disabled:opacity-60"
+      >
+        {approveReport.isPending ? "등록 중..." : "승인 및 등록"}
+      </button>
+    </form>
   )
 }

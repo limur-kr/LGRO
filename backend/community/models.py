@@ -27,6 +27,15 @@ class Question(models.Model):
     content = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_OPEN)
     is_public = models.BooleanField(default=True)
+    restaurant_name = models.CharField(max_length=255, blank=True)
+    restaurant_address = models.CharField(max_length=255, blank=True)
+    linked_restaurant = models.ForeignKey(
+        "restaurants.JjambbongRestaurant",
+        related_name="source_reports",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -1,6 +1,7 @@
 import { apiClient } from "./client"
 import type {
   AIAnalysisResult,
+  ApproveReportPayload,
   AuthTokens,
   Job,
   Paginated,
@@ -100,8 +101,30 @@ export function getMyQuestions() {
   return apiClient.get<Paginated<Question>>("/questions/mine/").then((r) => r.data)
 }
 
-export function submitQuestion(payload: { title: string; content: string; is_public?: boolean }) {
+export function submitQuestion(payload: {
+  title: string
+  content: string
+  is_public?: boolean
+  restaurant_name?: string
+  restaurant_address?: string
+}) {
   return apiClient.post<Question>("/questions/", payload).then((r) => r.data)
+}
+
+export function getReportQueue(params?: { page?: number }) {
+  return apiClient
+    .get<Paginated<Question>>("/questions/", { params: { ...params, status: "OPEN", reported_only: "true" } })
+    .then((r) => r.data)
+}
+
+export function approveReport(id: string, payload: ApproveReportPayload) {
+  return apiClient.post<Question>(`/questions/${encodeURIComponent(id)}/approve/`, payload).then((r) => r.data)
+}
+
+export function rejectReport(id: string, reason?: string) {
+  return apiClient
+    .post<Question>(`/questions/${encodeURIComponent(id)}/reject/`, reason ? { reason } : {})
+    .then((r) => r.data)
 }
 
 export function logVisit(payload: Record<string, unknown>) {
