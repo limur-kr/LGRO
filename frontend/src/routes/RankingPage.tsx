@@ -3,6 +3,7 @@ import { useRestaurants } from "../hooks/useRestaurants"
 import { RestaurantCard } from "../components/restaurant/RestaurantCard"
 import { Pagination } from "../components/Pagination"
 import { LoadingState, ErrorState, EmptyState } from "../components/LoadingState"
+import { ReportFab } from "../components/ReportFab"
 import { formatRank } from "../lib/format"
 import type { RestaurantListParams } from "../api/types"
 
@@ -78,6 +79,8 @@ export function RankingPage() {
       <div className="mt-10">
         <Pagination page={page} count={data?.count ?? 0} pageSize={PAGE_SIZE} onPageChange={goToPage} />
       </div>
+
+      <ReportFab />
     </div>
   )
 }

@@ -14,7 +14,10 @@ class Command(BaseCommand):
         scope = parser.add_mutually_exclusive_group(required=True)
         scope.add_argument("--restaurant-id", help="Restaurant UUID to analyze.")
         scope.add_argument("--all", action="store_true", help="Analyze all visible restaurants sequentially.")
-        parser.add_argument("--model", default=None, help="Gemini model name. Defaults to GEMINI_MODEL or gemini-2.5-flash.")
+        parser.add_argument(
+            "--model", default=None,
+            help="Gemini model name. Defaults to GEMINI_MODEL env var or gemini-3.1-flash-lite.",
+        )
         parser.add_argument("--fail-fast", action="store_true", help="Stop on the first failed restaurant.")
 
     def handle(self, *args, **options):

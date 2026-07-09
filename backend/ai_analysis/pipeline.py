@@ -96,7 +96,7 @@ def save_failed_analysis(restaurant: JjambbongRestaurant, message: str) -> AIAna
 
 class JjambbongAnalysisPipeline:
     def __init__(self, model_name: str | None = None):
-        self.model_name = model_name or os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self.model_name = model_name or os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
         self._restaurant_cache: dict[str, JjambbongRestaurant] = {}
         self._model = create_structured_gemini_model(self.model_name)
         self.graph = self.build_graph()

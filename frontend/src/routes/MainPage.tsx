@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { useRestaurants } from "../hooks/useRestaurants"
 import { LoadingState, ErrorState, EmptyState } from "../components/LoadingState"
+import { ReportFab } from "../components/ReportFab"
 import { formatScore } from "../lib/format"
 import { getPrimaryImage, regionName, soupStyleLabel } from "../lib/restaurant"
 import type { RestaurantListItem } from "../api/types"
@@ -243,18 +244,7 @@ export function MainPage() {
         </div>
       </section>
 
-      {/* FAB */}
-      <div className="fixed bottom-8 right-8 z-50">
-        <Link
-          to="/report"
-          className="group flex items-center overflow-hidden rounded-full bg-flame-red p-4 text-white shadow-2xl transition-all duration-300 hover:scale-110"
-        >
-          <span className="material-symbols-outlined text-3xl transition-transform group-hover:rotate-12">add</span>
-          <span className="max-w-0 overflow-hidden whitespace-nowrap text-xs font-bold uppercase tracking-widest transition-all duration-500 group-hover:ml-3 group-hover:max-w-xs">
-            REPORT NEW SPOT
-          </span>
-        </Link>
-      </div>
+      <ReportFab />
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { useRegions, useRestaurants } from "../hooks/useRestaurants"
 import { RestaurantCard } from "../components/restaurant/RestaurantCard"
 import { Pagination } from "../components/Pagination"
 import { LoadingState, ErrorState, EmptyState } from "../components/LoadingState"
+import { ReportFab } from "../components/ReportFab"
 import type { RestaurantListParams, SoupStyle } from "../api/types"
 
 const SOUP_STYLES: { value: SoupStyle; label: string }[] = [
@@ -176,6 +177,8 @@ export function SearchResultPage() {
           <Pagination page={page} count={data?.count ?? 0} pageSize={PAGE_SIZE} onPageChange={goToPage} />
         </div>
       </div>
+
+      <ReportFab />
     </div>
   )
 }
