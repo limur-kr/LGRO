@@ -1,12 +1,17 @@
 import { apiClient } from "./client"
 import type {
   AIAnalysisResult,
+  AnalyticsSummary,
   ApproveReportPayload,
   AuthTokens,
+  Feedback,
+  FeedbackPayload,
+  FeedbackStats,
   Job,
   Paginated,
   PendingRestaurantImage,
   Question,
+  QuestionStats,
   Region,
   RestaurantDetail,
   RestaurantImage,
@@ -164,7 +169,27 @@ export function getPopularSearches() {
 }
 
 export function getAnalyticsSummary() {
-  return apiClient.get("/analytics/summary/").then((r) => r.data)
+  return apiClient.get<AnalyticsSummary>("/analytics/summary/").then((r) => r.data)
+}
+
+export function submitFeedback(payload: FeedbackPayload) {
+  return apiClient.post<Feedback>("/feedback/", payload).then((r) => r.data)
+}
+
+export function getFeedbackQueue(params?: { is_resolved?: boolean; page?: number }) {
+  return apiClient.get<Paginated<Feedback>>("/feedback/", { params }).then((r) => r.data)
+}
+
+export function resolveFeedback(id: string) {
+  return apiClient.post<Feedback>(`/feedback/${encodeURIComponent(id)}/resolve/`).then((r) => r.data)
+}
+
+export function getFeedbackStats() {
+  return apiClient.get<FeedbackStats>("/feedback/stats/").then((r) => r.data)
+}
+
+export function getQuestionStats() {
+  return apiClient.get<QuestionStats>("/questions/stats/").then((r) => r.data)
 }
 
 export function collectReviews(restaurantId?: string) {

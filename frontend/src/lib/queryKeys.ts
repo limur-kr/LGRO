@@ -10,4 +10,6 @@ export const queryKeys = {
   myQuestions: ["questions", "mine"] as const,
   reportQueue: ["questions", "reports"] as const,
   pendingRestaurantImages: ["restaurant-images", "pending"] as const,
+  feedbackQueue: ["feedback", "queue"] as const,
+  adminStats: ["admin", "stats"] as const,
 }

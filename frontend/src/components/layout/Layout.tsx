@@ -4,6 +4,7 @@ import { Header } from "./Header"
 import { Sidebar } from "./Sidebar"
 import { Footer } from "./Footer"
 import { AuthModal } from "../../auth/AuthModal"
+import { FeedbackWidget } from "../FeedbackWidget"
 import { useAnalyticsTracking } from "../../hooks/useAnalyticsTracking"
 
 export function Layout() {
@@ -24,6 +25,7 @@ export function Layout() {
       </main>
       <Footer />
       <AuthModal />
+      <FeedbackWidget />
     </div>
   )
 }

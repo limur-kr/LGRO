@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from accounts.serializers import UserSerializer
 
-from .models import Answer, Question
+from .models import Answer, Feedback, Question
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -49,3 +49,26 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     def get_linked_restaurant_name(self, obj):
         return obj.linked_restaurant.name if obj.linked_restaurant_id else None
+
+
+class FeedbackCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = ("category", "message", "page_path")
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Feedback
+        fields = (
+            "id",
+            "user",
+            "category",
+            "message",
+            "page_path",
+            "is_resolved",
+            "created_at",
+        )
+        read_only_fields = ("id", "user", "is_resolved", "created_at")

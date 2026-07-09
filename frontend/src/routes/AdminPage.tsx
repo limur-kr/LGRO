@@ -5,11 +5,20 @@ import { getMe, collectReviews, runAnalysis } from "../api/endpoints"
 import { useRegions, useRestaurants } from "../hooks/useRestaurants"
 import { useApproveReport, useRejectReport, useReportQueue } from "../hooks/useReports"
 import { useApproveRestaurantImage, useDeleteRestaurantImage, usePendingRestaurantImages } from "../hooks/useRestaurantImages"
+import { useFeedbackQueue, useResolveFeedback } from "../hooks/useFeedback"
 import { useJobPolling } from "../hooks/useJobPolling"
 import { LoadingState } from "../components/LoadingState"
 import { AuthGatePanel } from "../components/AuthGatePanel"
+import { StatsSummarySection } from "../components/admin/StatsSummarySection"
 import { resolveImageUrl, soupStyleLabel } from "../lib/restaurant"
-import type { ApproveReportPayload, PendingRestaurantImage, Question, SoupStyle } from "../api/types"
+import type { ApproveReportPayload, Feedback, PendingRestaurantImage, Question, SoupStyle } from "../api/types"
+
+const FEEDBACK_CATEGORY_LABELS: Record<string, string> = {
+  BUG: "버그 신고",
+  SUGGESTION: "제안",
+  PRAISE: "칭찬",
+  OTHER: "기타",
+}
 
 const SOUP_STYLE_OPTIONS: SoupStyle[] = ["MEAT", "SEAFOOD", "MIXED", "UNKNOWN"]
 
@@ -60,8 +69,10 @@ export function AdminPage() {
     <div className="mx-auto max-w-3xl px-4 py-12 md:px-8">
       <h1 className="mb-8 text-headline-lg font-headline">관리자 대시보드</h1>
 
+      <StatsSummarySection />
       <ReportQueueSection />
       <PhotoQueueSection />
+      <FeedbackQueueSection />
 
       <div className="card-surface hard-shadow-sm mb-8 p-5">
         <p className="mb-3 font-mono text-label-caps text-on-surface-variant">작업 범위</p>
@@ -334,6 +345,55 @@ function PhotoQueueRow({ image }: { image: PendingRestaurantImage }) {
           반려
         </button>
       </div>
+    </div>
+  )
+}
+
+function FeedbackQueueSection() {
+  const { data, isLoading } = useFeedbackQueue()
+  const items = data?.results ?? []
+
+  return (
+    <div className="card-surface hard-shadow-sm mb-8 p-5">
+      <p className="mb-3 font-mono text-label-caps text-on-surface-variant">피드백</p>
+      {isLoading && <p className="text-body-sm text-on-surface-variant">불러오는 중...</p>}
+      {!isLoading && items.length === 0 && (
+        <p className="text-body-sm text-on-surface-variant">대기 중인 피드백이 없습니다.</p>
+      )}
+      <div className="space-y-3">
+        {items.map((feedback) => (
+          <FeedbackRow key={feedback.id} feedback={feedback} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function FeedbackRow({ feedback }: { feedback: Feedback }) {
+  const resolveFeedbackMutation = useResolveFeedback()
+
+  return (
+    <div className="border-2 border-on-background p-4">
+      <div className="mb-1 flex items-center justify-between gap-3">
+        <span className="text-label-caps font-mono text-on-surface-variant">
+          {FEEDBACK_CATEGORY_LABELS[feedback.category] ?? feedback.category}
+        </span>
+        <span className="text-label-caps font-mono text-on-surface-variant">
+          {feedback.user?.display_name || feedback.user?.username || "익명"}
+        </span>
+      </div>
+      <p className="mb-1 whitespace-pre-wrap text-body-sm">{feedback.message}</p>
+      {feedback.page_path && (
+        <p className="mb-3 text-label-caps font-mono text-on-surface-variant">{feedback.page_path}</p>
+      )}
+      <button
+        type="button"
+        onClick={() => resolveFeedbackMutation.mutate(feedback.id)}
+        disabled={resolveFeedbackMutation.isPending}
+        className="hard-shadow-sm bg-primary px-4 py-2 text-body-sm font-medium text-on-primary disabled:opacity-60"
+      >
+        {resolveFeedbackMutation.isPending ? "처리 중..." : "해결 처리"}
+      </button>
     </div>
   )
 }

@@ -152,6 +152,66 @@ export interface Question {
   updated_at: string
 }
 
+export type FeedbackCategory = "BUG" | "SUGGESTION" | "PRAISE" | "OTHER"
+
+export interface Feedback {
+  id: string
+  user: User | null
+  category: FeedbackCategory
+  message: string
+  page_path: string
+  is_resolved: boolean
+  created_at: string
+}
+
+export interface FeedbackPayload {
+  category: FeedbackCategory
+  message: string
+  page_path?: string
+}
+
+export interface QuestionStats {
+  open: number
+  answered: number
+  closed: number
+  reported_pending: number
+}
+
+export interface FeedbackStats {
+  total: number
+  unresolved: number
+  by_category: Partial<Record<FeedbackCategory, number>>
+}
+
+export interface AnalyticsSummary {
+  visits: {
+    total: number
+    today: number
+    popular_paths: { path: string; count: number }[]
+  }
+  searches: {
+    total: number
+    today: number
+    popular_keywords: {
+      id: number
+      keyword: string
+      normalized_keyword: string
+      search_count: number
+      first_searched_at: string
+      last_searched_at: string
+      updated_at: string
+    }[]
+    recent: {
+      id: number
+      keyword: string
+      normalized_keyword: string
+      result_count: number | null
+      metadata: Record<string, unknown>
+      created_at: string
+    }[]
+  }
+}
+
 export interface ApproveReportPayload {
   region_code: string
   name?: string

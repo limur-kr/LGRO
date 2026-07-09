@@ -1,4 +1,5 @@
-from rest_framework import permissions, status, viewsets
+from django.db.models import Count
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -6,8 +7,13 @@ from accounts.permissions import IsServiceAdmin
 from restaurants.models import JjambbongRestaurant, Region
 from restaurants.services import geocode_address
 
-from .models import Answer, Question
-from .serializers import AnswerSerializer, QuestionSerializer
+from .models import Answer, Feedback, Question
+from .serializers import (
+    AnswerSerializer,
+    FeedbackCreateSerializer,
+    FeedbackSerializer,
+    QuestionSerializer,
+)
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -35,7 +41,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated()]
         if self.action == "answer":
             return [permissions.IsAdminUser()]
-        if self.action in {"approve", "reject"}:
+        if self.action in {"approve", "reject", "stats"}:
             return [IsServiceAdmin()]
         return [permissions.AllowAny()]
 
@@ -134,4 +140,60 @@ class QuestionViewSet(viewsets.ModelViewSet):
         output = self.get_serializer(question)
         return Response(output.data, status=status.HTTP_201_CREATED)
 
-# Create your views here.
+    @action(detail=False, methods=["get"])
+    def stats(self, request):
+        queryset = Question.objects.all()
+        by_status = dict(queryset.values_list("status").annotate(count=Count("id")).order_by())
+        reported_pending = queryset.filter(status=Question.STATUS_OPEN).exclude(restaurant_name="").count()
+        return Response(
+            {
+                "open": by_status.get(Question.STATUS_OPEN, 0),
+                "answered": by_status.get(Question.STATUS_ANSWERED, 0),
+                "closed": by_status.get(Question.STATUS_CLOSED, 0),
+                "reported_pending": reported_pending,
+            }
+        )
+
+
+class FeedbackViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Feedback.objects.select_related("user").all()
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        is_resolved = self.request.query_params.get("is_resolved")
+        if is_resolved is not None:
+            queryset = queryset.filter(is_resolved=is_resolved.lower() in {"true", "1", "yes"})
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return FeedbackCreateSerializer
+        return FeedbackSerializer
+
+    def get_permissions(self):
+        if self.action in {"list", "resolve", "stats"}:
+            return [IsServiceAdmin()]
+        return [permissions.AllowAny()]
+
+    def perform_create(self, serializer):
+        user = self.request.user if self.request.user.is_authenticated else None
+        serializer.save(user=user)
+
+    @action(detail=True, methods=["post"], permission_classes=(IsServiceAdmin,))
+    def resolve(self, request, pk=None):
+        feedback = self.get_object()
+        feedback.is_resolved = True
+        feedback.save(update_fields=["is_resolved"])
+        return Response(FeedbackSerializer(feedback).data)
+
+    @action(detail=False, methods=["get"], permission_classes=(IsServiceAdmin,))
+    def stats(self, request):
+        queryset = Feedback.objects.all()
+        by_category = dict(queryset.values_list("category").annotate(count=Count("id")).order_by())
+        return Response(
+            {
+                "total": queryset.count(),
+                "unresolved": queryset.filter(is_resolved=False).count(),
+                "by_category": by_category,
+            }
+        )
